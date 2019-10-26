@@ -1,0 +1,11 @@
+#include <stdio.h>
+
+int main(){
+	char teste;
+	int inteiro;
+	scanf("%d", &inteiro);
+	teste = inteiro;
+	printf("%d\n", teste);
+	return 0;
+}
+
