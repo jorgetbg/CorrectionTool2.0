@@ -22,17 +22,16 @@ module.exports = {
       return res.send("Informações invalidas!",400)
 
     let aluno = await Aluno.findOne({email})
-    console.log(aluno)
     if(aluno)
       return res.send("Este endereço de email já esta cadastrado!")
 
-    await Aluno.create({
+    aluno = await Aluno.create({
       email,
       nome,
       password
     })
 
-    return res.sendStatus({"user_id":aluno._id});
+    return res.send({"user_id":aluno._id});
 
   }
 };

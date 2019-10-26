@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -9,7 +10,7 @@ const routes = require('./routes');
 const app = express();
 const server = http.Server(app);
 
-mongoose.connect('mongodb://localhost:27017/octave', {
+mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
