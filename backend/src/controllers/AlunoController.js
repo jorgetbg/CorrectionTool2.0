@@ -7,23 +7,23 @@ module.exports = {
     let aluno = await Aluno.findOne({ email });
 
     if (!aluno)
-      res.send("Usuario ou senha incorretos.",401)
+      res.send({error:"Usuario ou senha incorretos."}, 401)
 
     if(aluno.password == password)
       res.send({"user_id":aluno._id})
 
     else
-      res.send("Usuario ou senha incorretos.", 401)
+      res.send({error:"Usuario ou senha incorretos."}, 401)
 
   },
-  async register(req, res){
+  async store(req, res){
     const {email, nome, password} = req.body;
     if(!email || !nome || !password) 
-      return res.send("Informações invalidas!",400)
+      return res.send({error:"Informações inválidas."},400)
 
     let aluno = await Aluno.findOne({email})
     if(aluno)
-      return res.send("Este endereço de email já esta cadastrado!")
+      return res.send({error:"Este endereço de email já esta cadastrado!"})
 
     aluno = await Aluno.create({
       email,
@@ -32,6 +32,5 @@ module.exports = {
     })
 
     return res.send({"user_id":aluno._id});
-
   }
 };
