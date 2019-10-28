@@ -1,25 +1,27 @@
 const Professor = require('../models/Professor');
+const SessionController = require('./SessionController')
 
 module.exports = {
-  async login(req, res) {
+  async authenticate(req, res) {
     const { email, password } = req.body;
 
-    if(!email || !password) 
-      return res.send({error:"Informações inválidas."},400)
-
-    let professor = await Professor.findOne({ email });
-
-    
-    if (!professor) {
-      //professor = await Professor.create({ email });
-      return res.send({error:"Usuario ou senha incorretos."}, 401);
+    if (!email || !password)
+      return res.status(400).send({ status: "error", message: "Informações inválidas.", data: null })
+    let professor
+    try {
+      professor = await Professor.findOne({ email });
+      if (!professor) throw { status: "error", message: "Usuario ou senha incorretos.", data: null }
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null })
     }
-    if(password == professor.password)
-      return res.json({"user_id":professor._id});
 
-    return res.send({error:"Usuario ou senha incorretos."}, 401);
 
-    
+    if (password != professor.password)
+      return res.status(401).send({ status: "error", message: "Usuario ou senha incorretos.", data: null })
 
-  }
+
+    let token = SessionController.generateToken({ id: professor._id, role: "professor" })
+    return res.status(200).send({ status: "success", message: "Professor encontrado!!!", data: { professor: professor.nome, token: token } })
+
+  },
 };

@@ -16,6 +16,10 @@ mongoose.connect(process.env.DATABASE, {
 })
 
 
+
+
+
+
 // GET, POST, PUT, DELETE
 
 // req.query = Acessar query params (para filtros)

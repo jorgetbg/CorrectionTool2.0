@@ -7,45 +7,56 @@ module.exports = {
     const { userId, materiaId, password } = req.body
 
     if (!userId || !materiaId || !password)
-      return res.status(400).send({ error: "Informações inválidas." })
+      return res.status(400).send({ status: "error", message: "Informações inválidas.", data: null })
 
-    let materia = await Materia.findById(materiaId);
-    if (!materia)
-      return res.send({ error: "Matéria inexistente." }, 400);
-
-    let aluno = await Aluno.findById(userId);
-    if (!aluno)
-      return res.send({ error: "Aluno inexistente." }, 400);
-
-
-    if (password != materia.password)
-      return res.send({ error: "Senha incorreta." }, 401);
-
-    let matricula = await Matricula.findOne({ "aluno": userId })
-    if (matricula)
-      return res.status(400).send({ error: "Aluno já matriculado na matéria." })
+    let materia
+    try {
+      materia = await Materia.findById(materiaId);
+      if (!materia)
+        throw "Matéria inexistente"
+      if (password != materia.password)
+        throw "Senha incorreta"
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
 
 
-    matricula = await Matricula.create({
-      aluno: userId,
-      materia: materiaId
-    })
-    return res.status(200).send({"matricula":matricula._id})
+    let matricula
+    try {
+      matricula = await Matricula.findOne({ "aluno": userId, "materia": materiaId })
+      if (matricula)
+        throw "Aluno já matriculado nessa matéria."
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
+
+    try {
+      matricula = await Matricula.create({
+        aluno: userId,
+        materia: materiaId
+      })
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
+    return res.status(200).send({ status: "success", message: "Matricula criada!!!", data: { "matricula": matricula._id } })
   },
 
-  async index(req, res) {
+  async obterMatriculasAluno(req, res) {
     const pagina = (req.query.page !== undefined && req.query.page <= 0) ? 1 : req.query.page
     const itensPorPagina = 10
-    let materias = await Materia.find().limit(itensPorPagina).skip(itensPorPagina * (pagina - 1)).populate('professor', 'nome') //populate esta causando +150ms
+    let matriculas
+    try{
+      matriculas = await Matricula.find({aluno:req.body.userId}).limit(itensPorPagina).skip(itensPorPagina * (pagina - 1)).populate('materia', 'nome') //populate esta causando +150ms
+    }catch(e){
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
 
 
-    materias = materias.map(materia => {
+    matriculas = matriculas.map(matricula => {
       return {
-        nome: materia.nome,
-        professor: materia.professor.nome
+        materia: matricula.materia.nome
       }
     })
-
-    return res.send(materias)
+    return res.status(200).send({ status: "success", message: "Matriculas obtidas com sucesso!!!", data: {matriculas}})
   }
 };

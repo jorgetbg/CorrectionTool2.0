@@ -6,34 +6,44 @@ module.exports = {
     const { userId, nome, password } = req.body
 
     if (!userId || !nome || !password)
-      return res.status(400).send({ error: "Informações inválidas." })
+      return res.status(400).send({ status: "error", message: "Informações inválidas.", data: null })
 
-    let professor = await Professor.findById(userId);
-    if (!professor) return res.send({ error: "Usuário inexistente." }, 400);
+    //Middleware garante que o usuario é professor e com token valido (passado pelo servidor)
 
-    Materia.create({
-      password,
-      nome,
-      professor: userId
-    })
-    return res.sendStatus(200)
+    let materia
+    try {
+      materia = await Materia.create({
+        password,
+        nome,
+        professor: userId
+      })
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
+
+    return res.status(200).send({ status: "success", message: "Matéria cadastrada!!!", data: { materia: materia.nome } })
   },
 
   async index(req, res) {
     const pagina = (req.query.page !== undefined && req.query.page <= 0) ? 1 : req.query.page
     const itensPorPagina = 10
-    let materias = await Materia.find().limit(itensPorPagina).skip(itensPorPagina * (pagina - 1)).populate('professor', 'nome') //populate esta causando +150ms
-
-
+    let materias
+    if(req.body.role == "professor")
+      materias = await Materia.find({professor: req.body.userId}).limit(itensPorPagina).skip(itensPorPagina * (pagina - 1)).populate('professor', 'nome')
     
-    materias = materias.map( materia =>{
+    else
+      materias = await Materia.find().limit(itensPorPagina).skip(itensPorPagina * (pagina - 1)).populate('professor', 'nome') //populate esta causando +150ms
+
+
+
+    materias = materias.map(materia => {
       return {
-        _id: materia._id, 
+        _id: materia._id,
         nome: materia.nome,
         professor: materia.professor.nome
       }
     })
-    
-    return res.send(materias)
+
+    return res.status(200).send({ status: "success", message: "Matérias encontradas!!!", data: materias })
   }
 };

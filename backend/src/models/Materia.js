@@ -1,11 +1,20 @@
 const mongoose = require('mongoose');
 
 const materiaSchema = new mongoose.Schema({
-  nome: String,
-  password: String,
+  nome: {
+  type: String,
+  trim: true,
+  required: true
+ },
+  password: {
+  type: String,
+  trim: true,
+  required: true
+ },
   professor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Professor'
+    ref: 'Professor',
+    required: true
   },
 });
 
