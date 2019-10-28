@@ -22,6 +22,7 @@ routes.post('/aluno/create', AlunoController.store)
 
 //Materias
 routes.post('/materia/create',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.store)
+routes.get('/materia/alunos',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.obterAlunosMatriculados)
 routes.get('/materia',(req, res, next) => SessionController.validar(req, res, next), MateriaController.index)
 //routes.get('/materia/:id', MateriaController.show) //TODO
 

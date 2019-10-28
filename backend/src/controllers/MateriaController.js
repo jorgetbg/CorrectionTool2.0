@@ -1,4 +1,5 @@
 const Materia = require('../models/Materia');
+const Matricula = require('../models/Matricula');
 const Professor = require('../models/Professor');
 
 module.exports = {
@@ -45,5 +46,34 @@ module.exports = {
     })
 
     return res.status(200).send({ status: "success", message: "Matérias encontradas!!!", data: materias })
+  },
+  async obterAlunosMatriculados(req, res){
+    const {materiaId, userId} = req.body
+    
+    let matriculas
+    let materia
+    try{
+      if (!materiaId)
+        throw "Informações inválidas."      
+      materia = await Materia.findById(materiaId)
+      if(!materia)
+        throw "Materia não existe."
+      if(materia.professor != userId)
+        throw "Materia não pertence a este professor"
+
+      matriculas = await Matricula.find({materia:materiaId}).populate("aluno")
+    }catch(e){
+      return res.status(400).send({ status: "error", message: e, data: null })
+    }
+
+    let alunosMatriculados = matriculas.map(matricula => {
+      return {
+        _id: matricula.aluno._id,
+        nome: matricula.aluno.nome
+      }
+    })
+    
+    
+    return res.status(200).send({ status: "success", message: "Alunos obtidos com sucesso!!!", data: { alunos: alunosMatriculados } })
   }
 };
