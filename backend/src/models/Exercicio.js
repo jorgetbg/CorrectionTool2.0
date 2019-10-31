@@ -16,6 +16,12 @@ const exercicioSchema = new mongoose.Schema({
   trim: true,
   required: true
  },
+ linguagem: {
+  type: String,
+  trim: true,
+  required: false,
+  default: "octave"
+ },
   materia: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Materia',
