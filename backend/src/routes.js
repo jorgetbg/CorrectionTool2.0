@@ -29,7 +29,9 @@ routes.get('/materia',(req, res, next) => SessionController.validar(req, res, ne
 routes.get('/matricula',(req, res, next) => SessionController.validar(req, res, next, "aluno"), MatriculaController.obterMatriculasAluno)
 routes.post('/matricula/create',(req, res, next) => SessionController.validar(req, res, next, "aluno") , MatriculaController.store)
 
-routes.post('/exercicio/create', ExercicioController.store)
+routes.post('/exercicio/create',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.store)
+routes.get('/exercicio/show',(req, res, next) => SessionController.validar(req, res, next)  ,ExercicioController.getExerciciosMateria)
+
 
 
 
