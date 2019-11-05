@@ -1,16 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
+const uploadConfig = require('./config/upload');
+
 const AlunoController = require('./controllers/AlunoController');
 const ProfessorController = require('./controllers/ProfessorController');
 const MateriaController = require('./controllers/MateriaController');
 const MatriculaController = require('./controllers/MatriculaController');
 const ExercicioController = require('./controllers/ExercicioController');
 const SessionController = require('./controllers/SessionController');
-//const uploadConfig = require('./config/upload');
+const ResolucaoController = require('./controllers/ResolucaoController');
 
 const routes = express.Router();
-//const upload = multer(uploadConfig);
+const upload = multer(uploadConfig);
 
 
 //Professor
@@ -24,7 +26,6 @@ routes.post('/aluno/create', AlunoController.store)
 routes.post('/materia/create',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.store)
 routes.get('/materia/alunos',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.obterAlunosMatriculados)
 routes.get('/materia',(req, res, next) => SessionController.validar(req, res, next), MateriaController.index)
-//routes.get('/materia/:id', MateriaController.show) //TODO
 
 routes.get('/matricula',(req, res, next) => SessionController.validar(req, res, next, "aluno"), MatriculaController.obterMatriculasAluno)
 routes.post('/matricula/create',(req, res, next) => SessionController.validar(req, res, next, "aluno") , MatriculaController.store)
@@ -34,7 +35,7 @@ routes.get('/exercicio/show',(req, res, next) => SessionController.validar(req, 
 
 
 
-
+routes.post('/resolucao/submit', upload.single('arquivoResolucao'), (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.store)
 
 
 
