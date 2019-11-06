@@ -54,7 +54,11 @@ module.exports = {
 
     matriculas = matriculas.map(matricula => {
       return {
-        materia: matricula.materia.nome
+        materia: {
+          _id: matricula.materia._id,
+          nome:  matricula.materia.nome
+        }
+
       }
     })
     return res.status(200).send({ status: "success", message: "Matriculas obtidas com sucesso!!!", data: {matriculas}})

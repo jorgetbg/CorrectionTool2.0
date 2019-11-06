@@ -16,6 +16,14 @@ const resolucaoSchema = new mongoose.Schema({
         ref: 'Exercicio',
         required: true
     },
+    tentativas: {
+        type: Number,
+        default: 1,
+    },
+    dataSubmissao: {
+        type: Date,
+        default: new Date().toISOString()
+    }
 })
 
 
