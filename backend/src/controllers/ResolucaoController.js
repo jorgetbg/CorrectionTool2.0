@@ -1,15 +1,20 @@
 const Resolucao = require("../models/Resolucao");
 const Exercicio = require("../models/Exercicio");
+const FileUploadController = require("./FileUploadController");
 const fs = require("fs");
 const path = require("path");
 
 module.exports = {
   async store(req, res) {
-    const { filename } = req.file;
+    console.log("Foi")
     const { userId, exercicioId } = req.body;
-
+    
     let resolucao, exercicio, prazoDiff, prazoString;
     try {
+      if(!req.file) throw "É necessario fazer o upload de um arquivo."
+      const { filename, originalname } = req.file;
+
+      
       exercicio = await Exercicio.findById(exercicioId);
       if (!exercicio) throw "Exercício inexistente.";
 
@@ -20,29 +25,44 @@ module.exports = {
         aluno: userId,
         exercicio: exercicioId
       });
-      let filePath = path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "uploads",
-        resolucao.resolucaoFilename
-      );
+
+      let tempPath, definitivoPath;
+      tempPath = path.resolve(req.file.destination, filename);
       if (resolucao) {
-        if(fs.existsSync(filePath))
-            fs.unlinkSync(filePath);
-        resolucao.resolucaoFilename = filename;
         resolucao.tentativas++;
         resolucao.dataSubmissao = new Date().toISOString();
+
+        definitivoPath = FileUploadController.gerarDiretorio(
+          req.file,
+          exercicio.materia,
+          exercicio._id,
+          userId,
+          resolucao.tentativas
+        );
+
         await resolucao.save();
       } else {
         resolucao = await Resolucao.create({
           exercicio: exercicioId,
           aluno: userId,
-          resolucaoFilename: filename,
+          resolucaoFilename: originalname,
           dataSubmissao: new Date().toISOString()
         });
+
+        definitivoPath = FileUploadController.gerarDiretorio(
+          req.file,
+          exercicio.materia,
+          exercicio._id,
+          userId,
+          resolucao.tentativas
+        );
       }
+      FileUploadController.rename(tempPath, definitivoPath, originalname);
     } catch (e) {
+      if(req.file)
+        fs.unlink(req.file.path, e=>{
+          console.log(e)
+        })
       return res.status(400).send({ status: "error", message: e, data: null });
     }
 
