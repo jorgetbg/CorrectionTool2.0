@@ -36,8 +36,9 @@ routes.get('/exercicio/show',(req, res, next) => SessionController.validar(req, 
 
 
 routes.post('/resolucao/submit', upload.single('arquivoResolucao'), (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.store)
-routes.get('/resolucao/:exercicioId', (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.obterResolucaoDeExercicio)
 routes.get('/resolucoes/:exercicioId', (req, res, next) => SessionController.validar(req, res, next, "professor") ,ResolucaoController.obterResolucoesDeExercicio)
+routes.get('/resolucao/:exercicioId', (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.obterResolucaoDeExercicio)
+routes.get('/resolucao/:resolucaoId/download',(req, res, next) => SessionController.validar(req, res, next),ResolucaoController.download)
 
 
 

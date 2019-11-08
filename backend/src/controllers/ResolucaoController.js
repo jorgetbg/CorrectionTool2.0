@@ -6,15 +6,13 @@ const path = require("path");
 
 module.exports = {
   async store(req, res) {
-    console.log("Foi")
     const { userId, exercicioId } = req.body;
-    
+
     let resolucao, exercicio, prazoDiff, prazoString;
     try {
-      if(!req.file) throw "É necessario fazer o upload de um arquivo."
+      if (!req.file) throw "É necessario fazer o upload de um arquivo.";
       const { filename, originalname } = req.file;
 
-      
       exercicio = await Exercicio.findById(exercicioId);
       if (!exercicio) throw "Exercício inexistente.";
 
@@ -28,17 +26,14 @@ module.exports = {
 
       let tempPath, definitivoPath;
       tempPath = path.resolve(req.file.destination, filename);
+      definitivoPath = FileUploadController.gerarDiretorio(
+        exercicio.materia,
+        exercicio._id,
+        userId
+      );
       if (resolucao) {
         resolucao.tentativas++;
         resolucao.dataSubmissao = new Date().toISOString();
-
-        definitivoPath = FileUploadController.gerarDiretorio(
-          req.file,
-          exercicio.materia,
-          exercicio._id,
-          userId,
-          resolucao.tentativas
-        );
 
         await resolucao.save();
       } else {
@@ -48,21 +43,13 @@ module.exports = {
           resolucaoFilename: originalname,
           dataSubmissao: new Date().toISOString()
         });
-
-        definitivoPath = FileUploadController.gerarDiretorio(
-          req.file,
-          exercicio.materia,
-          exercicio._id,
-          userId,
-          resolucao.tentativas
-        );
       }
       FileUploadController.rename(tempPath, definitivoPath, originalname);
     } catch (e) {
-      if(req.file)
-        fs.unlink(req.file.path, e=>{
-          console.log(e)
-        })
+      if (req.file)
+        fs.unlink(req.file.path, e => {
+          console.log(e);
+        });
       return res.status(400).send({ status: "error", message: e, data: null });
     }
 
@@ -105,11 +92,8 @@ module.exports = {
   async obterResolucaoDeExercicio(req, res) {
     const { exercicioId } = req.params;
     const { userId } = req.body;
-    let exercicio, resolucao;
+    let resolucao;
     try {
-      //exercicio = await Exercicio.findById(exercicioId).populate("materia", "professor");
-      //   if(exercicio.materia.professor != userId) throw "Materia não pertence a este professor";
-      //   if (!exercicio) throw "Exercício inexistente.";
       resolucao = await Resolucao.findOne(
         { exercicio: exercicioId, aluno: userId },
         "exercicio resolucaoFilename tentativas dataSubmissão"
@@ -122,5 +106,33 @@ module.exports = {
       message: "Submissões obtidas!!!",
       data: { resolucao }
     });
+  },
+  async download(req, res) {
+    const { resolucaoId } = req.params;
+    const { userId, role } = req.body;
+    let resolucao, file, filePath;
+    try {
+      resolucao = await Resolucao.findById(resolucaoId)
+        .populate({path:'exercicio', populate: {path: "materia", select: "professor" }})
+      if (!resolucao) throw "Resolução Inexistente.";
+      console.log(resolucao)
+      if (role == "aluno") {
+        if (userId != resolucao.aluno)
+          throw "Resolução não pertence a esse aluno.";
+      } else {
+        if (userId != resolucao.exercicio.materia.professor)
+          throw "Resolução não pertence a um exercício desse professor.";
+      }
+
+      filePath = FileUploadController.gerarDiretorio(
+        resolucao.exercicio.materia._id,
+        resolucao.exercicio._id,
+        resolucao.aluno
+        );
+      filePath = path.resolve(filePath, resolucao.resolucaoFilename)
+    } catch (e) {
+      return res.status(400).send({ status: "error", message: e, data: null });
+    }
+    res.download(filePath, resolucao.resolucaoFilename)
   }
 };

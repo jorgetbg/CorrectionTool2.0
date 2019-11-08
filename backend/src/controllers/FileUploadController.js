@@ -11,8 +11,7 @@ module.exports = {
       throw e;
     }
   },
-  async salvarDefinitivo(file, path) {},
-  gerarDiretorio(file, materiaId, exercicioId, userId, tentativas) {
+  gerarDiretorio(materiaId, exercicioId, userId) {
     let filePath;
     try {
       filePath = path.resolve(
@@ -22,7 +21,7 @@ module.exports = {
         "uploads",
         "" + materiaId,
         "" + exercicioId,
-        userId
+        "" + userId
       );
     } catch (e) {
       console.log(e);
