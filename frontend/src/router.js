@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Dashboard from './components/pages/Dashboard'
 import Materias from './components/pages/Materias'
 import Exercicios from './components/pages/Exercicios'
+import Exercicio from './components/pages/Exercicio'
 import Login from './components/pages/Login'
 
 Vue.use(Router)
@@ -25,6 +26,11 @@ export default new Router({
       path: '/exercicios',
       name: 'exercicios',
       component: Exercicios
+    },
+    {
+      path: '/exercicio',
+      name: 'exercicio',
+      component: Exercicio
     },
     {
       path: '/login',

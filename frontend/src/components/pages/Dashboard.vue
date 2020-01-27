@@ -94,22 +94,4 @@ export default {
 </script>
 
 <style>
-.exercicio.aberto {
-  border-left: 4px solid #3cd1c2;
-}
-.exercicio.finalizado {
-  border-left: 4px solid tomato;
-}
-.exercicio.pendente {
-  border-left: 4px solid orange;
-}
-.v-chip.aberto {
-  background: #3cd1c2;
-}
-.v-chip.pendente {
-  background: orange;
-}
-.v-chip.finalizado {
-  background: tomato;
-}
 </style>

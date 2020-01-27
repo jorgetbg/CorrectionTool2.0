@@ -1,6 +1,6 @@
 <template>
-  <v-card flat class="px-2 my-3">
-    <v-layout row wrap :class="`${status} pa-3 exercicio  justify-space-around d-flex`">
+  <v-card flat class="px-2 my-3" router :to="`/exercicio/${id}`">
+    <v-layout row wrap  :class="`${status} pa-3 exercicio card-exercicio justify-space-around d-flex`">
       <v-flex xs12 md5>
         <div class="caption grey--text">Nome do Exercício</div>
         <div>{{exercicioNome}}</div>
@@ -51,10 +51,37 @@ export default {
     status: {
         type: String,
         required: true
+    },
+    id: {
+        type: String,
+        required: false,
+        default: ''
     }
   }
 };
 </script>
 
 <style>
+.card-exercicio:hover{
+  background-color: #dfdfdf;
+  cursor: pointer;
+}
+.exercicio.aberto {
+  border-left: 4px solid #3cd1c2;
+}
+.exercicio.finalizado {
+  border-left: 4px solid tomato;
+}
+.exercicio.pendente {
+  border-left: 4px solid orange;
+}
+.v-chip.aberto {
+  background: #3cd1c2;
+}
+.v-chip.pendente {
+  background: orange;
+}
+.v-chip.finalizado {
+  background: tomato;
+}
 </style>
