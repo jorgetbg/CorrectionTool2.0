@@ -6,7 +6,7 @@
       class="amber accent-3"
     >
       <v-list >
-      <v-list-item-group v-model="item" >
+      <v-list-item-group >
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
