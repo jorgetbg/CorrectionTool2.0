@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Dashboard from './components/pages/Dashboard'
 import Materias from './components/pages/Materias'
 import Exercicios from './components/pages/Exercicios'
 import Exercicio from './components/pages/Exercicio'
@@ -13,17 +12,12 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'dashboard',
-      component: Dashboard
-    },
-    {
       path: '/materias',
       name: 'materias',
       component: Materias
     },
     {
-      path: '/exercicios',
+      path: '/',
       name: 'exercicios',
       component: Exercicios
     },

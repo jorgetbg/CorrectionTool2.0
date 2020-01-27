@@ -5,6 +5,16 @@
       app
       class="amber accent-3"
     >
+      <v-layout column align-center>
+        <v-flex class="mt-12">
+          <v-avatar size="100">
+            <img :src="user.avatar" :alt="`Avatar de ${user.nome}.`">
+          </v-avatar>
+        </v-flex>
+        <v-flex>
+          <p class="mt-1">{{user.nome}}</p>
+        </v-flex>
+      </v-layout>
       <v-list >
       <v-list-item-group >
         <v-list-item
@@ -45,11 +55,16 @@ export default {
     return {
       drawer: false,
       items: [
-        { text: 'Dashboard', icon: 'dashboard', route:"/" },
+        { text: 'Exercicios', icon: 'home_work', route:"/" },
         { text: 'Matérias', icon: 'group', route:"/materias" },
-        { text: 'Exercicios', icon: 'home_work', route:"exercicios" },
       ],
     };
+  },
+  props: {
+    user: {
+      type: Object,
+      required: false
+    }
   }
 };
 </script>

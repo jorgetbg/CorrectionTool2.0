@@ -1,6 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
-    <Navbar />
+    <Navbar :user="user"/>
     <v-content class="px4 pb-4 grey lighten-4" >
       <router-view></router-view>
     </v-content>
@@ -19,6 +19,11 @@ export default {
   },
 
   data: () => ({
+    user:{
+      nome: "João Augusto",
+      avatar: '/avatar.jpg'
+
+    }
     //
   }),
 };
