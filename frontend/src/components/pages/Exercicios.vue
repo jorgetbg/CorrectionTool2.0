@@ -1,6 +1,8 @@
 <template>
   <div class="exercicios">
     <v-subheader class="grey--text">EXERCÍCIOS</v-subheader>
+    <adicionar-exercicio/>
+
     <v-container class="my-5">
       <v-layout row class="mb-3">
         <v-btn small text color="grey" @click="ordenarPor('nome')">
@@ -41,6 +43,7 @@
 
 <script>
 import CardExercicio from "../template/CardExercicio";
+import AdicionarExercicio from "../template/AdicionarExercicio";
 
 export default {
   data() {
@@ -88,7 +91,8 @@ export default {
     }
   },
   components: {
-    "card-exercicio": CardExercicio
+    "card-exercicio": CardExercicio,
+    "adicionar-exercicio": AdicionarExercicio
   }
 };
 </script>

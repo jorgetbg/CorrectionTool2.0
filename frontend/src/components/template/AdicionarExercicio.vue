@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="600px" v-model="dialog">
+  <v-dialog max-width="600px">
     <template v-slot:activator="{ on }">
       <v-btn class="amber accent-3" fixed bottom right fab v-on="on">
         <v-icon>add</v-icon>
@@ -7,7 +7,7 @@
     </template>
     <v-card>
       <v-card-title>
-        <h2>Adicionar nova matéria</h2>
+        <h2>Adicionar novo exercício</h2>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
@@ -39,7 +39,6 @@
 export default {
   data() {
     return {
-      dialog: false,
       nomeMateria: "",
       senhaMateria: "",
       exibirSenha: false,
@@ -52,14 +51,17 @@ export default {
     };
   },
   methods: {
+    on(){
+      this.resetar();
+    },
     submeter(){
       if(!this.validar()) return;
+      alert('');
       this.resetar();
-      this.dialog = false
     },
     validar(){
-      //this.submetendo = true;
-      return this.$refs.form.validate();
+      this.submetendo = true;
+      //return this.$refs.form.validate();
     },
     resetar () {
       this.$refs.form.reset()
