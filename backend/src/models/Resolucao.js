@@ -21,8 +21,13 @@ const resolucaoSchema = new mongoose.Schema({
         default: 1,
     },
     dataSubmissao: {
-        type: Date,
-        default: new Date().toISOString()
+        type: "String",
+        default: Date.now()
+    },
+    status: {
+        type: String,
+        required: false,
+        default: "pendente"
     }
 })
 

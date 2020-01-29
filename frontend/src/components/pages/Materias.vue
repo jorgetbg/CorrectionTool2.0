@@ -2,7 +2,7 @@
   <div class="materias">
     <v-subheader class="grey--text">MATERIAS</v-subheader>
     <v-container class="my-5">
-      <adicionar-materia/>
+      <adicionar-materia :addMateriaCallback="adicionarMateriaViaProp"/>
 
       <v-row align-content="space-around">
         <v-col md="6" sm="12" class="px-2 py-1" v-for="(materia, i) in materias" :key="i">
@@ -41,9 +41,10 @@
                   <v-flex v-for="(exercicio, j) in materia.exercicios" :key="j">
                     <card-exercicio
                       :exercicioNome="exercicio.descricao"
-                      :submissoes="`0 / ${materia.capacidade}`"
+                      :submissoes="`${exercicio.submissoesCount} / ${materia.capacidade}`"
                       :dataFinal="converterData(exercicio.prazo)"
                       :status="exercicio.status"
+                      :id="exercicio._id"
                     ></card-exercicio>
                   </v-flex>
                 </v-layout>
@@ -58,6 +59,7 @@
 
 
 <script>
+import dataMixin from '../../util/date'
 import CardExercicio from "../template/CardExercicio";
 import AdicionarMateria from "../template/AdicionarMateria"
 import backend from '../../backend'
@@ -79,12 +81,8 @@ export default {
     "card-exercicio": CardExercicio,
     "adicionar-materia": AdicionarMateria
   },
+  mixins: [dataMixin],
   methods: {
-    log(a){
-      /* eslint-disable no-console */
-      console.log(a);
-      /* eslint-enable no-console */
-    },
     buscarExerciciosMateria(materia){
       if(materia.dadosPreenchidos == true) return
 
@@ -97,17 +95,14 @@ export default {
         materia.nome = ""
         materia.nome = aux //Vue nota a mudança e é forçado a renderizar novamente
         materia.exercicios = exercicios //Apenas adicionar um atributo ao objeto não esta forçando a renderização
-        this.log(res.data)
       })
       axios.get(`${backend.uri}/${materia._id}/alunos`).then(res=>{
         materia.alunos = res.data.data.alunos
       })
 
     },
-    converterData(data){
-      data = parseInt(data)
-      data = new Date(data)
-      return data.toLocaleString().split(' ')[0] //Pega apenas a parte do dia, ignora 
+    adicionarMateriaViaProp(materia){
+      this.materias.unshift(materia)
     }
   },
   created() {

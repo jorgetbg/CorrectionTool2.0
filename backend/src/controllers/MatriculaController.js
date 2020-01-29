@@ -36,6 +36,8 @@ module.exports = {
         materia: materiaId
       })
       materia.lotacao++;
+
+      await materia.save()
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null })
     }
@@ -51,7 +53,7 @@ module.exports = {
     }catch(e){
       return res.status(400).send({ status: "error", message: e, data: null })
     }
-
+    console.log(matriculas)
 
     matriculas = matriculas.map(matricula => {
       return {

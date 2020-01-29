@@ -34,7 +34,7 @@ export default {
   props: {
     exercicioNome: {
       type: String,
-      required: true
+      required: false
     },
     materiaNome: {
       type: String,
@@ -42,15 +42,15 @@ export default {
     },
     submissoes: {
         type: String,
-        required: true
+        required: false
     },
     dataFinal: {
         type: String,
-        required: true
+        required: false
     },
     status: {
         type: String,
-        required: true
+        required: false
     },
     id: {
         type: String,

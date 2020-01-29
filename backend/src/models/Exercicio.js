@@ -31,6 +31,11 @@ const exercicioSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: "pendente"
+  },
+  submissoesCount: {
+    type: Number,
+    required: false,
+    default: 0
   }
 });
 

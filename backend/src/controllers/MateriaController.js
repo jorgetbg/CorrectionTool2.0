@@ -33,7 +33,7 @@ module.exports = {
       .send({
         status: "success",
         message: "Matéria cadastrada!!!",
-        data: { materia: materia.nome }
+        data: { materia: materia.nome, _id: materia._id }
       });
   },
 

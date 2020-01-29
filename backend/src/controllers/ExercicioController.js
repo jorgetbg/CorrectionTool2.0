@@ -30,6 +30,22 @@ module.exports = {
     return res.status(200).send({ status: "success", message: "Exercício cadastrado!!!", data: {exercicio: exercicio._id } })
   },
 
+  async exercicioShow(req, res){
+    const {exercicioId} = req.params
+
+    let exercicio
+    try{
+      if(!exercicioId) throw "Informações inválidas..";
+
+      exercicio = await Exercicio.findById(exercicioId).populate("materia", "nome")
+      if(!exercicio) throw "Exercício inexistente."
+
+      return res.status(200).send({ status: "success", message: "Exercício encontrado!!!", data: {exercicio} })
+    }catch(e){
+      return res.status(401).send({ status: "error", message: e, data: null });
+    }
+  },
+
   async getExerciciosMateria(req, res){
     const {  userId, role } = req.body;
     const materiaId = req.params.materiaId;

@@ -32,7 +32,7 @@ routes.post('/matricula/create',(req, res, next) => SessionController.validar(re
 
 routes.post('/exercicio/create',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.store)
 routes.get('/exercicio/show/:materiaId',(req, res, next) => SessionController.validar(req, res, next)  ,ExercicioController.getExerciciosMateria)
-
+routes.get('/:exercicioId/show/',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.exercicioShow)
 
 
 routes.post('/resolucao/submit', upload.single('arquivoResolucao'), (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.store)

@@ -36,6 +36,8 @@
 
 
 <script>
+import backend from '../../backend'
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -54,11 +56,30 @@ export default {
   methods: {
     submeter(){
       if(!this.validar()) return;
-      this.resetar();
-      this.dialog = false
+      this.submetendo = true;
+      let materia = {
+        nome: this.nomeMateria,
+        password: this.senhaMateria,
+        capacidade: this.capacidade,
+        lotacao: 0,
+        status: "pendente",
+        carregando: false,
+        dadosPreenchidos: false,
+        exercicios: []
+      }
+
+      axios.post(`${backend.uri}/materia/create`,materia).then(res=>{
+        this.submetendo = false;
+        if(res.status == 200)
+          this.submetendo = false;
+        this.resetar();
+        this.dialog = false
+        materia._id = res.data.data._id
+        this.addMateriaCallback(materia)
+      })
+
     },
     validar(){
-      //this.submetendo = true;
       return this.$refs.form.validate();
     },
     resetar () {
@@ -67,6 +88,12 @@ export default {
       this.senhaMateria= ""
       this.exibirSenha= false
       this.capacidade=45
+    }
+  },
+  props: {
+    addMateriaCallback:{
+      type: Function,
+      required: false
     }
   }
 };

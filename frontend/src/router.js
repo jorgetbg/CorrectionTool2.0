@@ -22,7 +22,7 @@ export default new Router({
       component: Exercicios
     },
     {
-      path: '/exercicio',
+      path: '/exercicio/:id',
       name: 'exercicio',
       component: Exercicio
     },

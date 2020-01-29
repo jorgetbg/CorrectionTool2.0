@@ -12,7 +12,6 @@ module.exports = {
     try {
       if (!req.file) throw "É necessario fazer o upload de um arquivo.";
       const { filename, originalname } = req.file;
-
       exercicio = await Exercicio.findById(exercicioId);
       if (!exercicio) throw "Exercício inexistente.";
 
@@ -33,16 +32,20 @@ module.exports = {
       );
       if (resolucao) {
         resolucao.tentativas++;
-        resolucao.dataSubmissao = new Date().toISOString();
+        resolucao.dataSubmissao = Date.now();
+        resolucao.resolucaoFilename = originalname;
 
         await resolucao.save();
+        console.log(resolucao)
       } else {
         resolucao = await Resolucao.create({
           exercicio: exercicioId,
           aluno: userId,
           resolucaoFilename: originalname,
-          dataSubmissao: new Date().toISOString()
+          dataSubmissao:  Date.now()
         });
+        exercicio.submissoesCount++;
+        await exercicio.save()
       }
       FileUploadController.rename(tempPath, definitivoPath, originalname);
     } catch (e) {
@@ -78,7 +81,7 @@ module.exports = {
       if (!exercicio) throw "Exercício inexistente.";
       resolucoes = await Resolucao.find(
         { exercicio: exercicioId },
-        "aluno resolucaoFilename tentativas dataSubmissao"
+        "aluno resolucaoFilename tentativas dataSubmissao status"
       ).populate("aluno", "email nome");
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null });
@@ -96,7 +99,7 @@ module.exports = {
     try {
       resolucao = await Resolucao.findOne(
         { exercicio: exercicioId, aluno: userId },
-        "exercicio resolucaoFilename tentativas dataSubmissão"
+        "exercicio resolucaoFilename tentativas dataSubmissão status"
       );
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null });
@@ -129,7 +132,9 @@ module.exports = {
         resolucao.exercicio._id,
         resolucao.aluno
         );
+      console.log(filePath)
       filePath = path.resolve(filePath, resolucao.resolucaoFilename)
+      console.log(filePath)
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null });
     }
