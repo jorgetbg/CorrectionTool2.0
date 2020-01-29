@@ -21,6 +21,7 @@ module.exports = {
         descricao,
         prazo,
         nota,
+        status: "pendente",
         materia: materiaId
       });
     } catch (e) {
@@ -30,7 +31,9 @@ module.exports = {
   },
 
   async getExerciciosMateria(req, res){
-    const { materiaId, userId, role } = req.body;
+    const {  userId, role } = req.body;
+    const materiaId = req.params.materiaId;
+
     let materia, exercicios, matricula
     try{
       if (!materiaId) throw "Informações inválidas..";

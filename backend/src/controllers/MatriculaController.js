@@ -35,6 +35,7 @@ module.exports = {
         aluno: userId,
         materia: materiaId
       })
+      materia.lotacao++;
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null })
     }

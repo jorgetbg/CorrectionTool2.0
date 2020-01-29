@@ -3,6 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const uploadConfig = require('./config/upload');
 
+
 const AlunoController = require('./controllers/AlunoController');
 const ProfessorController = require('./controllers/ProfessorController');
 const MateriaController = require('./controllers/MateriaController');
@@ -14,7 +15,6 @@ const ResolucaoController = require('./controllers/ResolucaoController');
 const routes = express.Router();
 const upload = multer(uploadConfig);
 
-
 //Professor
 routes.post('/professor/login',ProfessorController.authenticate)
 
@@ -24,14 +24,14 @@ routes.post('/aluno/create', AlunoController.store)
 
 //Materias
 routes.post('/materia/create',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.store)
-routes.get('/materia/alunos',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.obterAlunosMatriculados)
+routes.get('/:materiaId/alunos',(req, res, next) => SessionController.validar(req, res, next, "professor") ,MateriaController.obterAlunosMatriculados)
 routes.get('/materia',(req, res, next) => SessionController.validar(req, res, next), MateriaController.index)
 
 routes.get('/matricula',(req, res, next) => SessionController.validar(req, res, next, "aluno"), MatriculaController.obterMatriculasAluno)
 routes.post('/matricula/create',(req, res, next) => SessionController.validar(req, res, next, "aluno") , MatriculaController.store)
 
 routes.post('/exercicio/create',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.store)
-routes.get('/exercicio/show',(req, res, next) => SessionController.validar(req, res, next)  ,ExercicioController.getExerciciosMateria)
+routes.get('/exercicio/show/:materiaId',(req, res, next) => SessionController.validar(req, res, next)  ,ExercicioController.getExerciciosMateria)
 
 
 

@@ -16,6 +16,16 @@ const materiaSchema = new mongoose.Schema({
     ref: 'Professor',
     required: true
   },
+  lotacao: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  capacidade: {
+    type: Number,
+    required: false,
+    default: 25
+  }
 });
 
 module.exports = mongoose.model('Materia', materiaSchema);

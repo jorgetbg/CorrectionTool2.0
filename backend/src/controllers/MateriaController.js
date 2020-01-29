@@ -54,11 +54,15 @@ module.exports = {
         .populate("professor", "nome"); //populate esta causando +150ms
 
     materias = materias.map(materia => {
-      return {
+      let m = {
         _id: materia._id,
         nome: materia.nome,
-        professor: materia.professor.nome
+        professor: materia.professor.nome,
+        capacidade: materia.capacidade,
+        lotacao: materia.lotacao,
+        status: true
       };
+      return m
     });
 
     return res
@@ -70,7 +74,8 @@ module.exports = {
       });
   },
   async obterAlunosMatriculados(req, res) {
-    const { materiaId, userId } = req.body;
+    const { userId } = req.body;
+    const { materiaId } = req.params;
 
     let matriculas;
     let materia;

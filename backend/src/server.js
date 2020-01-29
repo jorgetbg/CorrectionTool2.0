@@ -2,6 +2,11 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+var cors = require('cors')
+
+var cookieParser = require('cookie-parser')
+
+
 
 const http = require('http');
 
@@ -16,17 +21,17 @@ mongoose.connect(process.env.DATABASE, {
 })
 
 
-
-
-
-
 // GET, POST, PUT, DELETE
 
 // req.query = Acessar query params (para filtros)
 // req.params = Acessar route params (para edição, delete)
 // req.body = Acessar corpo da requisição (para criação, edição)
 
-//app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: "http://localhost:8080"
+}))
+app.use(cookieParser())
 app.use(express.json());
 app.use(routes);
 

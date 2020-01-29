@@ -26,6 +26,11 @@ const exercicioSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Materia',
     required: true
+  },
+  status: {
+    type: String,
+    required: false,
+    default: "pendente"
   }
 });
 

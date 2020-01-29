@@ -6,40 +6,43 @@
 
       <v-row align-content="space-around">
         <v-col md="6" sm="12" class="px-2 py-1" v-for="(materia, i) in materias" :key="i">
-          <v-expansion-panels>
-            <v-expansion-panel>
-              <v-expansion-panel-header class>
-                <v-card flat :class="`${materia.status} materia px-2 my-1`">
+          <v-expansion-panels :disabled="carregando">
+            <v-expansion-panel :class="`${materia.carregando ? 'carregando' : ''}`" @change="buscarExerciciosMateria(materia)">
+              <v-expansion-panel-header>
+                <v-card flat :loading="materia.carregando" :class="`${materia.status} materia px-2 my-1`">
                   <v-layout wrap class="pa-3">
-                    <v-flex xs="12" md="4">
+                    <v-flex xs="12" md="6" md6>
                       <div class="caption grey--text">Nome do matéria</div>
-                      <div>{{materia.nome}}</div>
+                      <div v-if="!carregando">{{materia.nome}}</div>
                     </v-flex>
                     <v-flex xs="6" md="1">
                       <div class="caption grey--text">Capacidade</div>
-                      <div>{{materia.lotacao}} / {{materia.capacidade}}</div>
+                      <div v-if="!carregando">{{materia.lotacao}} / {{materia.capacidade}}</div>
                     </v-flex>
                     <v-flex xs="2" sm="4" md="1">
                       <div class="caption grey--text">Status</div>
-                      <v-switch class="my-0" v-model="materia.status" disabled color="green"></v-switch>
+                      <v-switch v-if="!carregando" class="my-0" v-model="materia.status" disabled color="green"></v-switch>
                     </v-flex>
                   </v-layout>
                 </v-card>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-layout nowrap overflow-hidden>
-                  <v-flex v-for="(item, i) in materia.lotacao" :key="i">
-                    <div>
-                      <v-icon d-inline>person</v-icon>
-                    </div>
+                  <v-flex v-for="(aluno, i) in materia.alunos" :key="i">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon d-inline v-on="on">person</v-icon>
+                      </template>
+                      <span>{{aluno.nome}}</span>
+                    </v-tooltip>
                   </v-flex>
                 </v-layout>
                 <v-layout column px-6>
                   <v-flex v-for="(exercicio, j) in materia.exercicios" :key="j">
                     <card-exercicio
-                      :exercicioNome="exercicio.nome"
-                      :submissoes="exercicio.submissoes"
-                      :dataFinal="exercicio.dataFinal"
+                      :exercicioNome="exercicio.descricao"
+                      :submissoes="`0 / ${materia.capacidade}`"
+                      :dataFinal="converterData(exercicio.prazo)"
                       :status="exercicio.status"
                     ></card-exercicio>
                   </v-flex>
@@ -57,75 +60,69 @@
 <script>
 import CardExercicio from "../template/CardExercicio";
 import AdicionarMateria from "../template/AdicionarMateria"
+import backend from '../../backend'
+import axios from 'axios'
+axios.defaults.withCredentials = true;
+
 
 export default {
   data() {
     return {
+      carregando: true,
       materias: [
-        {
-          nome: "Engenharia Prod. 2020/1",
-          capacidade: 34,
-          status: true,
-          lotacao: 12,
-          exercicios: [
-            {
-              nome: "Implementar método da bisseção",
-              materia: "Engenharia Prod. 2020/1",
-              submissoes: "0/34",
-              dataFinal: "30/01/2020",
-              status: "pendente"
-            }
-          ]
-        },
-        {
-          nome: "BCC. 2020/1",
-          capacidade: 42,
-          status: true,
-          lotacao: 8,
-          exercicios: [
-            {
-              nome: "Implementar fatorial",
-              materia: "BCC. 2020/1",
-              submissoes: "12/34",
-              dataFinal: "07/02/2020",
-              status: "aberto"
-            }
-          ]
-        },
-        {
-          nome: "Engenharia Mec. 2020/1",
-          capacidade: 34,
-          status: true,
-          lotacao: 27,
-          exercicios: [
-            {
-              nome: "Implementar método de Newton Raphson",
-              materia: "Engenharia Mec. 2020/1",
-              submissoes: "20/34",
-              dataFinal: "18/02/2020",
-              status: "aberto"
-            },
-            {
-              nome: "Implementar método da secante",
-              materia: "Engenharia Mec. 2020/1",
-              submissoes: "29/34",
-              dataFinal: "13/01/2020",
-              status: "finalizado"
-            }
-          ]
-        },
-        {
-          nome: "Engenharia Elet. 2019/2",
-          capacidade: 34,
-          status: false,
-          lotacao: 33
-        }
+        {carregando: true},
+        {carregando: true}
       ]
     };
   },
   components: {
     "card-exercicio": CardExercicio,
     "adicionar-materia": AdicionarMateria
+  },
+  methods: {
+    log(a){
+      /* eslint-disable no-console */
+      console.log(a);
+      /* eslint-enable no-console */
+    },
+    buscarExerciciosMateria(materia){
+      if(materia.dadosPreenchidos == true) return
+
+      materia.dadosPreenchidos = true;
+      materia.carregando = true;
+      axios.get(`${backend.uri}/exercicio/show/${materia._id}`).then(res=>{
+        materia.carregando = false;
+        let exercicios = res.data.data.exercicios
+        let aux = materia.nome
+        materia.nome = ""
+        materia.nome = aux //Vue nota a mudança e é forçado a renderizar novamente
+        materia.exercicios = exercicios //Apenas adicionar um atributo ao objeto não esta forçando a renderização
+        this.log(res.data)
+      })
+      axios.get(`${backend.uri}/${materia._id}/alunos`).then(res=>{
+        materia.alunos = res.data.data.alunos
+      })
+
+    },
+    converterData(data){
+      data = parseInt(data)
+      data = new Date(data)
+      return data.toLocaleString().split(' ')[0] //Pega apenas a parte do dia, ignora 
+    }
+  },
+  created() {
+        axios.get(`${backend.uri}/materia`).then(res=>{
+          this.carregando = false;
+          let materias = res.data.data
+
+          materias.forEach(materia => {
+            materia.exercicio = []
+            materia.alunos = []
+            materia.carregando = false
+            materia.dadosPreenchidos = false
+          });
+          this.materias = materias
+        })
   }
 };
 </script>
@@ -136,5 +133,8 @@ export default {
 }
 .materia.false {
   border-left: 4px solid tomato;
+}
+.v-expansion-panel.carregando{
+  background-color: #0f0f0f;
 }
 </style>
