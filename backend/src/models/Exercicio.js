@@ -34,7 +34,7 @@ const exercicioSchema = new mongoose.Schema({
   },
   submissoesCount: {
     type: Number,
-    required: false,
+    required: true,
     default: 0
   }
 });

@@ -11,19 +11,43 @@
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
-          <v-text-field label="Nome" v-model="nomeMateria" :rules="[rules.required, rules.min]"></v-text-field>
-          <v-text-field
-            label="Senha"
-            v-model="senhaMateria"
-            :type="exibirSenha ? 'text' : 'password'"
+          <v-textarea
+            rows="3"
+            auto-grow
+            label="Descricao"
+            v-model="descricao"
             :rules="[rules.required, rules.min]"
-            :append-icon="exibirSenha ? 'mdi-eye' : 'mdi-eye-off'"
-            @click:append="exibirSenha = !exibirSenha"
-          ></v-text-field>
-          <div>
-                <v-subheader class="pl-0">Máximo de alunos: {{capacidade}}</v-subheader>
-                <v-slider v-model="capacidade" thumb-label="always" :thumb-size="24" min="1" max="45"></v-slider>
-          </div>
+          ></v-textarea>
+          <v-select
+            v-model="materia"
+            :items="materias"
+            item-text="nome"
+            label="Matéria"
+            item-value="_id"
+            chips
+            clearable
+            multiple
+            :rules="[rules.required]"
+          ></v-select>
+
+          <v-menu
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            max-width="290px"
+            min-width="290px"
+            v-model="seletorData"
+            ref="datepicker"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field :value="dataFormatada" label="Data de entrega" v-on="on" prepend-icon="date_range"  :rules="[rules.required]"></v-text-field>
+            </template>
+            <v-date-picker v-model="dataEntrega" @input="seletorData = false" locale="pt-BR" :date-format="date => new Date(date)">
+              <v-btn text color="primary" @click="seletorData = false">Cencalar</v-btn>
+              <v-btn text color="primary" @click="$refs.datepicker.save(date)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+
           <v-btn class="success mx-0 mt-3" @click="submeter" :loading="submetendo">Adicionar Matéria</v-btn>
         </v-form>
       </v-card-text>
@@ -36,39 +60,93 @@
 
 
 <script>
+import dataMixin from '../../util/date'
+import backend from "../../backend";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 export default {
+  mixins: [dataMixin],
   data() {
     return {
-      nomeMateria: "",
-      senhaMateria: "",
-      exibirSenha: false,
-      capacidade:45,
+      descricao: "",
+      seletorData: false,
+      dataEntrega: "",
+      materias: [],
+      materia: "",
       rules: {
-        min: v => v.length >= 6 || "Min 6 caracteres",
+        min: v => v.length >= 15 || "Min 15 caracteres",
         required: value => !!value || "Obrigatório."
       },
       submetendo: false
     };
   },
   methods: {
-    on(){
-      this.resetar();
-    },
-    submeter(){
-      if(!this.validar()) return;
-      alert('');
-      this.resetar();
-    },
-    validar(){
+    submeter() {
+      if (!this.validar()) return;
       this.submetendo = true;
-      //return this.$refs.form.validate();
+      
+      this.materia.forEach(m => { // Para cada materia selecionada, adicione um exercicio
+        let exercicio = {
+          descricao: this.descricao,
+          prazo: new Date(this.dataEntrega.replace(/-/g, '/')).getTime(),
+          nota: 10,
+          materiaId: m
+        }
+        try{
+
+          axios.post(`${backend.uri}/exercicio/create`, exercicio).then(res=>{
+            this.submetendo = false;
+            exercicio = res.data.data.exercicio
+            this.log(exercicio)
+            exercicio.nome = exercicio.descricao
+            exercicio.submissoes= 0
+
+            this.adicionarCallback(exercicio)
+        })
+        }catch(e){
+          /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+          console.error(e);
+          /* eslint-enable no-console */
+        }
+      });
+      
+      //this.resetar();
     },
-    resetar () {
-      this.$refs.form.reset()
-      this.nomeMateria= ""
-      this.senhaMateria= ""
-      this.exibirSenha= false
-      this.capacidade=45
+    validar() {
+      return this.$refs.form.validate();
+    },
+    log(a) {
+      /* eslint-disable no-console */
+      console.log(a);
+      /* eslint-enable no-console */
+    },
+    resetar() {
+      this.$refs.form.reset();
+      this.nomeMateria = "";
+      this.senhaMateria = "";
+      this.exibirSenha = false;
+      this.capacidade = 45;
+    }
+  },
+  computed: {
+    dataFormatada(){
+      let data = new Date(this.dataEntrega.replace(/-/g, '/')).getTime()
+      return data ? this.converterData(data) : ""
+    }
+  },
+  created() {
+    axios.get(`${backend.uri}/materia`).then(res => {
+      let materias = res.data.data;
+      this.materias = materias.map(materia => {
+        return { nome: materia.nome, _id: materia._id };
+      });
+    });
+  },
+  props:{
+    adicionarCallback:{
+      type: Function,
+      required: false
     }
   }
 };

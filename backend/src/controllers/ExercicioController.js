@@ -23,11 +23,13 @@ module.exports = {
         nota,
         status: "pendente",
         materia: materiaId
-      });
+      })
+      exercicio = await exercicio.populate("materia", "nome").execPopulate()
+      console.log(exercicio)
     } catch (e) {
       return res.status(401).send({ status: "error", message: e, data: null });
     }
-    return res.status(200).send({ status: "success", message: "Exercício cadastrado!!!", data: {exercicio: exercicio._id } })
+    return res.status(200).send({ status: "success", message: "Exercício cadastrado!!!", data: {exercicio } })
   },
 
   async exercicioShow(req, res){

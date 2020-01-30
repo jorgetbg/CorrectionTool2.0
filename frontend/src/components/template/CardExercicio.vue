@@ -44,7 +44,7 @@ export default {
       required: false
     },
     submissoes: {
-        type: String,
+        type: Number,
         required: false
     },
     dataFinal: {

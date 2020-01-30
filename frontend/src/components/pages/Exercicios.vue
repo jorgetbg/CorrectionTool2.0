@@ -1,7 +1,7 @@
 <template>
   <div class="exercicios">
     <v-subheader class="grey--text">EXERCÍCIOS</v-subheader>
-    <adicionar-exercicio/>
+    <adicionar-exercicio :adicionarCallback="adicionarExercicio"/>
 
     <v-container class="my-5">
       <v-layout row class="mb-3">
@@ -34,6 +34,7 @@
         :submissoes="exercicio.submissoesCount"
         :dataFinal="exercicio.prazo"
         :status="exercicio.status"
+        :id="exercicio._id"
       >
       {{exercicio}}
       </card-exercicio>
@@ -73,6 +74,9 @@ export default {
       this.exercicios.sort((a, b) => {
         Date.parse(a) - Date.parse(b);
       });
+    },
+    adicionarExercicio(exercicio){
+      this.exercicios.unshift(exercicio)
     }
   },
   components: {
