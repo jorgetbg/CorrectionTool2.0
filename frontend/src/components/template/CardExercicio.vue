@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="px-2 my-3" router :to="`/exercicio/${id}`">
+  <v-card flat class="px-2 my-3" router :to="`/exercicio/${id}`" :loading="loading">
     <v-layout row wrap  :class="`${status} pa-3 exercicio card-exercicio justify-space-around d-flex`">
       <v-flex xs12 md5>
         <div class="caption grey--text">Nome do Exercício</div>
@@ -15,7 +15,7 @@
       </v-flex>
       <v-flex xs6 sm4 md2>
         <div class="caption grey--text">Data final</div>
-        <div>{{dataFinal}}</div>
+        <div>{{converterData(dataFinal)}}</div>
       </v-flex>
       <v-flex xs2 sm4 md1>
         <div class="text-right pr-12">
@@ -30,7 +30,10 @@
 </template>
 
 <script>
+import dataMixin from '../../util/date'
+
 export default {
+  mixins: [dataMixin],  
   props: {
     exercicioNome: {
       type: String,
@@ -56,6 +59,11 @@ export default {
         type: String,
         required: false,
         default: ''
+    },
+    loading: {
+        type: Boolean,
+        required: false,
+        default: false
     }
   }
 };

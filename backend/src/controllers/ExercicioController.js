@@ -45,7 +45,37 @@ module.exports = {
       return res.status(401).send({ status: "error", message: e, data: null });
     }
   },
+  async getExerciciosProfessor(req, res){
+    const {  userId  } = req.body;
 
+    let exercicios
+    try{
+      
+      var id = require('mongodb').ObjectID(userId);
+
+      exercicios = await Exercicio.aggregate([{
+        $lookup: {
+          "from": "materias",
+          "localField": "materia",
+          "foreignField": "_id",
+          "as": "materia"
+        }}, //Mesmo que o populate(materia)
+        {"$unwind": "$materia"}, //Tira matéria do array
+        {$match: { "materia.professor": id }}, //Exercicio pertente a matéria do professor
+        {$project: {_id: 1, status: 1, descricao: 1, prazo: 1, nota: 1, submissoesCount:1, "materia.nome": 1}} //Filtra apenas campos relevantes
+      ])
+      /*
+      exercicios = await Exercicio.aggregate( [ { $group : { 
+        _id : "$materia",
+        nome: {$first: "$lookup"}
+        }} 
+      ])*/
+
+      return res.status(200).send({ status: "success", message: "Exercícios encontrados!!!", data: {exercicios} })
+    }catch(e){
+      return res.status(401).send({ status: "error", message: e, data: null });
+    }
+  },
   async getExerciciosMateria(req, res){
     const {  userId, role } = req.body;
     const materiaId = req.params.materiaId;

@@ -31,6 +31,7 @@ routes.get('/matricula',(req, res, next) => SessionController.validar(req, res, 
 routes.post('/matricula/create',(req, res, next) => SessionController.validar(req, res, next, "aluno") , MatriculaController.store)
 
 routes.post('/exercicio/create',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.store)
+routes.get('/exercicios/',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.getExerciciosProfessor)
 routes.get('/exercicio/show/:materiaId',(req, res, next) => SessionController.validar(req, res, next)  ,ExercicioController.getExerciciosMateria)
 routes.get('/:exercicioId/show/',(req, res, next) => SessionController.validar(req, res, next, "professor")  ,ExercicioController.exercicioShow)
 

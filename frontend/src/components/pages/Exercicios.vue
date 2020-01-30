@@ -28,10 +28,11 @@
         class="px-2 my-3"
         v-for="(exercicio, i) in exercicios"
         :key="i"
-        :exercicioNome="exercicio.nome"
-        :materiaNome="exercicio.materia"
-        :submissoes="exercicio.submissoes"
-        :dataFinal="exercicio.dataFinal"
+        :loading="carregando"
+        :exercicioNome="exercicio.descricao"
+        :materiaNome="exercicio.materia.nome"
+        :submissoes="exercicio.submissoesCount"
+        :dataFinal="exercicio.prazo"
         :status="exercicio.status"
       >
       {{exercicio}}
@@ -44,38 +45,22 @@
 <script>
 import CardExercicio from "../template/CardExercicio";
 import AdicionarExercicio from "../template/AdicionarExercicio";
+import backend from '../../backend'
+import axios from 'axios'
+axios.defaults.withCredentials = true;
+
 
 export default {
   data() {
     return {
+      carregando: true,
       exercicios: [
         {
-          nome: "Implementar método da bisseção",
-          materia: "Engenharia Prod. 2020/1",
-          submissoes: "0/34",
-          dataFinal: "30/01/2020",
-          status: "pendente"
-        },
-        {
-          nome: "Implementar método de Newton Raphson",
-          materia: "Engenharia Mec. 2020/1",
-          submissoes: "20/34",
-          dataFinal: "18/02/2020",
-          status: "aberto"
-        },
-        {
-          nome: "Implementar fatorial",
-          materia: "BCC. 2020/1",
-          submissoes: "12/34",
-          dataFinal: "07/02/2020",
-          status: "aberto"
-        },
-        {
-          nome: "Implementar método da secante",
-          materia: "Engenharia Mec. 2020/1",
-          submissoes: "29/34",
-          dataFinal: "13/01/2020",
-          status: "finalizado"
+          descricao: "",
+          materia: {nome:""},
+          submissoes: "",
+          prazo: "",
+          status: ""
         }
       ]
     };
@@ -93,6 +78,13 @@ export default {
   components: {
     "card-exercicio": CardExercicio,
     "adicionar-exercicio": AdicionarExercicio
+  },
+  created(){
+    axios.get(`${backend.uri}/exercicios`).then(res => {
+      this.exercicios = res.data.data.exercicios
+      this.carregando = false
+
+    })
   }
 };
 </script>
