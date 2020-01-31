@@ -76,7 +76,7 @@
                         </v-btn>
                       </v-col>
                       <v-col md="1">
-                        <v-btn class="success" @click="adicionarTeste">
+                        <v-btn class="success" @click="adicionarTeste" :loading="salvandoTeste">
                           <v-icon>add</v-icon>
                           Salvar
                         </v-btn>
@@ -127,6 +127,7 @@ export default {
       stepperAtivo: 1,
       backendConfig: backend,
       carregando: true,
+      salvandoTeste: false,
       exercicio: {
         descricao: "",
         materia: { nome: "" },
@@ -145,16 +146,7 @@ export default {
         input: [],
         output: ""
       },
-      testes: [
-        {
-          input: ["@(x)x^2 + 2*x - 50", "@(x) 2*x + 2", "3"],
-          output: "6.141428"
-        },
-        {
-          input: ["@(x) x^2 - 10", "@(x) 2*x", "15"],
-          output: "3.1622"
-        }
-      ],
+      testes: [],
       rules: [ value => !!value || "Obrigatório."]
     };
   },
@@ -177,9 +169,15 @@ export default {
     },
     adicionarTeste(){
       if(this.$refs.form.validate()){
+        this.salvandoTeste = true
         let testeClone = JSON.parse(JSON.stringify(this.testeSendoAdicionado))
         this.testes.push(testeClone)
-        this.limparForm()
+        testeClone.exercicioId = this.$route.params.id
+        axios.post(`${backend.uri}/testes/create`, testeClone).then(() => {
+          this.salvandoTeste = false
+          this.limparForm()
+        })
+
       }
     }
   },
@@ -190,8 +188,13 @@ export default {
       }),
       axios
         .get(`${backend.uri}/resolucoes/${this.$route.params.id}`)
-        .then(ress => {
-          this.submissoes = ress.data.data.resolucoes;
+        .then(res => {
+          this.submissoes = res.data.data.resolucoes;
+        }),
+      axios
+        .get(`${backend.uri}/exercicio/${this.$route.params.id}/testes`)
+        .then(res =>{
+          this.testes = res.data.data.testes
         })
     ];
 
