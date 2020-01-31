@@ -11,6 +11,7 @@ const MatriculaController = require('./controllers/MatriculaController');
 const ExercicioController = require('./controllers/ExercicioController');
 const SessionController = require('./controllers/SessionController');
 const ResolucaoController = require('./controllers/ResolucaoController');
+const TesteController = require('./controllers/TesteController');
 
 const routes = express.Router();
 const upload = multer(uploadConfig);
@@ -41,6 +42,9 @@ routes.get('/resolucoes/:exercicioId', (req, res, next) => SessionController.val
 routes.get('/resolucao/:exercicioId', (req, res, next) => SessionController.validar(req, res, next, "aluno") ,ResolucaoController.obterResolucaoDeExercicio)
 routes.get('/resolucao/:resolucaoId/download',(req, res, next) => SessionController.validar(req, res, next),ResolucaoController.download)
 
+//Testes
+routes.post('/testes/create',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.store)
+routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.getTestesExercicio)
 
 
 // routes.post('/sessions', SessionController.store);
