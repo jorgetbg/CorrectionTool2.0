@@ -40,7 +40,7 @@
         <span>Tool</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text color="grey">
+      <v-btn @click="deslogar" color="grey">
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
@@ -55,7 +55,7 @@ export default {
     return {
       drawer: false,
       items: [
-        { text: 'Exercicios', icon: 'home_work', route:"/" },
+        { text: 'Exercicios', icon: 'home_work', route:"/exercicios" },
         { text: 'Matérias', icon: 'group', route:"/materias" },
       ],
     };
@@ -64,6 +64,14 @@ export default {
     user: {
       type: Object,
       required: false
+    }
+  },
+  methods:{
+    deslogar(){
+      this.$cookie.delete("x-access-token")
+      window.localStorage.removeItem("user")
+      this.$emit("login-status")
+      this.$router.go("/login")
     }
   }
 };
