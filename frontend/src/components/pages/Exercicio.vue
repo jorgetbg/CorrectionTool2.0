@@ -9,7 +9,7 @@
             :exercicioNome="exercicio.descricao"
             :materiaNome="exercicio.materia.nome"
             :submissoes="exercicio.submissoesCount"
-            :dataFinal="converterData(exercicio.prazo)"
+            :dataFinal="exercicio.prazo"
             :status="exercicio.status"
           />
         </v-flex>
