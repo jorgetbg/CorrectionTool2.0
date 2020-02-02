@@ -3,6 +3,7 @@ const SessionController = require('./SessionController')
 
 module.exports = {
   async authenticate(req, res) {
+    console.log(req)
     const { email, password } = req.body;
 
     if (!email || !password)
@@ -12,7 +13,7 @@ module.exports = {
       professor = await Professor.findOne({ email });
       if (!professor) throw { status: "error", message: "Usuario ou senha incorretos.", data: null }
     } catch (e) {
-      return res.status(400).send({ status: "error", message: e, data: null })
+      return res.status(400).send({ status: "error", ...e, data: null })
     }
 
 
@@ -21,7 +22,7 @@ module.exports = {
 
 
     let token = SessionController.generateToken({ id: professor._id, role: "professor" })
-    return res.status(200).send({ status: "success", message: "Professor encontrado!!!", data: { professor: professor.nome, token: token } })
+    return res.status(200).send({ status: "success", message: "Professor encontrado!!!", data: { user: {nome: professor.nome, role: "professor"}, token: token } })
 
   },
 };
