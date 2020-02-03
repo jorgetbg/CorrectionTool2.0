@@ -27,13 +27,15 @@ export default {
     //
   }),
   methods:{
-    checarAutenticacao(){
+checarAutenticacao(){
       let token = this.$cookie.get('x-access-token')
       if(!token) this.autenticado = "convidado"
       else{
         this.user = JSON.parse(window.localStorage.getItem('user'))
-        this.autenticado = this.user.role
-        //this.user.gravatarUrl = `https://www.gravatar.com/avatar/${this.user.gravatarUrl}`
+        if(this.user)
+          this.autenticado = this.user.role
+        else
+          this.autenticado == "convidado"
       }
     }
   },
