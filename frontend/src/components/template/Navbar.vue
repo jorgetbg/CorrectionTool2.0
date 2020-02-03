@@ -8,7 +8,7 @@
       <v-layout column align-center>
         <v-flex class="mt-12">
           <v-avatar size="100">
-            <img :src="user.avatar" :alt="`Avatar de ${user.nome}.`">
+            <img :src="`https://www.gravatar.com/avatar/${user.gravatarUrl}`" :alt="`Avatar de ${user.nome}.`">
           </v-avatar>
         </v-flex>
         <v-flex>

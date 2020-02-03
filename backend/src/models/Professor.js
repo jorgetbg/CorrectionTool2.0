@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const md5 = require('md5')
 const professorSchema = new mongoose.Schema({
   email: {
   type: String,
@@ -15,6 +15,13 @@ const professorSchema = new mongoose.Schema({
   type: String,
   trim: true,
   required: true
+ },
+ gravatarUrl: {
+   type: String,
+   required: true,
+   default: function(){
+    return md5(this.email)
+   }
  }
 });
 

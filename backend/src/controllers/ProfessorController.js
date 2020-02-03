@@ -22,7 +22,7 @@ module.exports = {
 
 
     let token = SessionController.generateToken({ id: professor._id, role: "professor" })
-    return res.status(200).send({ status: "success", message: "Professor encontrado!!!", data: { user: {nome: professor.nome, role: "professor"}, token: token } })
+    return res.status(200).send({ status: "success", message: "Professor encontrado!!!", data: { user: {nome: professor.nome, role: "professor", gravatarUrl: professor.gravatarUrl}, token: token } })
 
   },
 };
