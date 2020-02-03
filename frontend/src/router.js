@@ -5,7 +5,6 @@ import Exercicios from './components/pages/Exercicios'
 import Exercicio from './components/pages/Exercicio'
 import Login from './components/pages/Login'
 import Aluno from './components/pages/Aluno'
-
 Vue.use(Router)
 
 let router = new Router({
@@ -49,9 +48,9 @@ let router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  //let app = Vue
   const requerAuth = to.matched.some(record  => record.meta.requiresAuth)
   const requerProfessor = to.matched.some(record => record.meta.role == "professor")
+  const requerAluno = to.matched.some(record => record.meta.role == "aluno")
   const user = JSON.parse(localStorage.getItem("user"))
 
   if (requerAuth) {
@@ -62,47 +61,24 @@ router.beforeEach((to, from, next) => {
         if(user.role == "professor")
           next()
         else
-          next( '/aluno' )
-      }else{ //Rota aluno
-        next()
+          next('/aluno')
+      }else if(requerAluno){ //Rota aluno
+        if(user.role == "aluno")
+          next()
+        else
+          next('/exercicios')
       }
     }
   }else{
     if(!user)
       next()
-    else
-      next("/aluno")
-  }
-  /*
-  if (to.matched.some(record => record.meta.requiresAuth)) {//Se algum dos caminhos da URL de destino precisa de autenticacao
-    if (app.cookie.get("x-access-token") == null  || localStorage.getItem("user")) {
-      console.log(app.cookie.get("x-access-token"))
-      next({
-        path: '/login',
-        params: { nextUrl: to.fullPath }
-      })
+    else{
+      if(user.role == "professor")
+        next("/exercicios")
+      else
+        next("aluno")
     }
-    else {
-      let user = JSON.parse(localStorage.getItem("user"))
-      if (to.matched.some(record => record.meta.role == "professor")) {
-        if (user.role == "professor")
-          next()
-        else
-          next({ name: "aluno" })
-      }
-    }
-    next()
-  }else{//Rotas de login
-    console.log(".")
-    if(app.cookie.get("x-access-token") == 'null')
-      next( "/login" )
-    else
-      next({ name: "exercicios"})//Se for aluno, a proxima passada pela função vai levar ele para /aluno
-    
-    
   }
-  */
-
 })
 
 export default router;
