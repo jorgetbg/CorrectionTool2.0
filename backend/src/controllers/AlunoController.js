@@ -20,7 +20,7 @@ module.exports = {
 
 
     const token = SessionController.generateToken({ id: aluno._id, role: "aluno" })
-    return res.status(200).send({ status: "success", message: "Aluno encontrado!!!", data: { aluno: {nome: aluno.nome, gravatarUrl: aluno.gravatarUrl}, token } })
+    return res.status(200).send({ status: "success", message: "Aluno encontrado!!!", data: { user: {nome: aluno.nome,role: "aluno", gravatarUrl: aluno.gravatarUrl}, token } })
 
   },
   async store(req, res) {
@@ -39,6 +39,6 @@ module.exports = {
     })
 
     const token = SessionController.generateToken({ id: aluno._id, role: "aluno" })
-    return res.status(200).send({ status: "success", message: "Aluno cadastrado!!!", data: { aluno: {nome: aluno.nome, gravatarUrl: aluno.gravatarUrl}, token } })
+    return res.status(200).send({ status: "success", message: "Aluno cadastrado!!!", data: { user: {nome: aluno.nome, role: "aluno", gravatarUrl: aluno.gravatarUrl}, token } })
   }
 };

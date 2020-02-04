@@ -1,5 +1,5 @@
 <template>
-  <h1>Pagina exclusiva para professores</h1>
+  <h1>Pagina exclusiva para alunos!</h1>
 </template>
 
 <script>

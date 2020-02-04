@@ -6,8 +6,10 @@
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
               <v-toolbar color="primary" dark flat>
-                <v-toolbar-title>Logar como professor</v-toolbar-title>
+                <v-toolbar-title>Logar como {{role}}</v-toolbar-title>
                 <v-spacer />
+                <v-icon v-if="role == 'professor'">school</v-icon>
+                <v-icon v-if="role == 'aluno'">edit</v-icon>
               </v-toolbar>
               <v-card-text>
                 <v-form ref="form">
@@ -31,6 +33,11 @@
                     :rules="[rules.required, rules.min]"
                   />
                 </v-form>
+
+                <a v-if="role == 'aluno'" @click="role = 'professor'">Quero me logar como professor</a>
+                <a v-if="role == 'professor'" @click="role = 'aluno'">Quero me logar como aluno</a>
+                <v-spacer></v-spacer>
+                <a>Não possui uma conta ? Registre-se!</a>
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
@@ -69,12 +76,13 @@ export default {
       this.submetendo = true;
       let user = { email: this.login, password: this.senha };
 
-        axios.post(`${backend.uri}/professor/login`, user).then(res => {
+      axios.post(`${backend.uri}/${this.role}/login`, user).then(res => {
             let authUser = res.data.data.user;
             window.localStorage.setItem("user", JSON.stringify(authUser));
-            this.$cookie.set("x-access-token", res.data.data.token, 1);
+            this.$cookie.set("x-access-token", res.data.data.token, { expires: '1Y' });
             this.$emit("login-status");
             if (this.role == "professor") this.$router.push("exercicios");
+            else this.$router.push("aluno")
         }).catch(e => {
           this.senhaErro = e.response.data.message
         }).finally(()=> {
