@@ -5,19 +5,19 @@
 
     <v-container class="my-5">
       <v-layout row class="mb-3">
-        <v-btn small text color="grey" @click="ordenarPor('nome')">
+        <v-btn small text color="grey" @click="ordenar('descricao')">
           <v-icon>home_work</v-icon>
           <span class="caption">Ordenar por exercicio</span>
         </v-btn>
-        <v-btn small text color="grey" @click="ordenarPor('materia')">
+        <v-btn small text color="grey" @click="ordenar('materia')">
           <v-icon>school</v-icon>
           <span class="caption">Ordenar por matéria</span>
         </v-btn>
-        <v-btn small text color="grey" @click="ordenarPor('status')">
+        <v-btn small text color="grey" @click="ordenar('status')">
           <v-icon>check_box</v-icon>
           <span class="caption">Ordenar por status</span>
         </v-btn>
-        <v-btn small text color="grey" @click="ordenarPorData()" disabled>
+        <v-btn small text color="grey" @click="ordenar('data')">
           <v-icon>calendar_today</v-icon>
           <span class="caption">Ordenar por data de final</span>
         </v-btn>
@@ -63,17 +63,18 @@ export default {
           prazo: "",
           status: ""
         }
-      ]
+      ],
+      metodoOrdenacao: {
+        materia: exercicios => exercicios.sort((a, b) => (a.materia.nome < b.materia.nome ? -1 : 1)),
+        descricao: exercicios => exercicios.sort((a, b) => (a.descricao < b.descricao ? -1 : 1)),
+        status: exercicios => exercicios.sort((a, b) => (a.status < b.status ? -1 : 1)),
+        data: exercicios => exercicios.sort((a, b) => (a.prazo < b.prazo ? -1 : 1)),
+      }
     };
   },
   methods: {
-    ordenarPor(prop) {
-      this.exercicios.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
-    },
-    ordenarPorData() {
-      this.exercicios.sort((a, b) => {
-        Date.parse(a) - Date.parse(b);
-      });
+    ordenar(campo){
+      this.metodoOrdenacao[campo](this.exercicios);
     },
     adicionarExercicio(exercicio){
       this.exercicios.unshift(exercicio)
@@ -87,7 +88,6 @@ export default {
     axios.get(`${backend.uri}/exercicios`).then(res => {
       this.exercicios = res.data.data.exercicios
       this.carregando = false
-
     })
   }
 };
