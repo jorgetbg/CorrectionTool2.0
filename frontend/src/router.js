@@ -5,6 +5,7 @@ import Exercicios from './components/pages/Exercicios'
 import Exercicio from './components/pages/Exercicio'
 import Login from './components/pages/Login'
 import Aluno from './components/pages/Aluno'
+import Register from './components/pages/Register'
 Vue.use(Router)
 
 let router = new Router({
@@ -38,10 +39,11 @@ let router = new Router({
       path: '/login',
       name: 'login',
       component: Login
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      //component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
     }
   ]
 })

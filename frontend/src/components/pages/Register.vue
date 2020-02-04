@@ -6,20 +6,28 @@
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
               <v-toolbar color="primary" dark flat>
-                <v-toolbar-title>Logar como {{role}}</v-toolbar-title>
+                <v-toolbar-title>Registrar como aluno</v-toolbar-title>
                 <v-spacer />
-                <v-icon v-if="role == 'professor'">school</v-icon>
-                <v-icon v-if="role == 'aluno'">edit</v-icon>
+                <v-icon>edit</v-icon>
               </v-toolbar>
               <v-card-text>
                 <v-form ref="form">
                   <v-text-field
-                    label="Login"
-                    name="login"
+                    label="Nome"
+                    name="nome"
                     prepend-icon="person"
                     type="text"
-                    v-model="login"
+                    v-model="nome"
                     :rules="[rules.required]"
+                  />
+
+                  <v-text-field
+                    label="Email"
+                    name="email"
+                    prepend-icon="alternate_email"
+                    type="email"
+                    v-model="email"
+                    :rules="[rules.required, rules.email]"
                   />
 
                   <v-text-field
@@ -28,20 +36,28 @@
                     name="password"
                     prepend-icon="lock"
                     type="password"
-                    v-model="senha"
+                    v-model="senha1"
                     :error-messages="senhaErro"
                     :rules="[rules.required, rules.min]"
                   />
+
+                  <v-text-field
+                    id="password"
+                    label="Confirme sua senha"
+                    name="password"
+                    prepend-icon="lock"
+                    type="password"
+                    v-model="senha2"
+                    :error-messages="senhaErro"
+                    :rules="[rules.required, rules.min, (senha2) => rules.senhasIguais(this.senha1, senha2)]"
+                  />
                 </v-form>
 
-                <a v-if="role == 'aluno'" @click="role = 'professor'">Quero me logar como professor</a>
-                <a v-if="role == 'professor'" @click="role = 'aluno'">Quero me logar como aluno</a>
-                <v-spacer></v-spacer>
-                <a @click="$router.push('register')">Não possui uma conta ? Registre-se!</a>
+                <a @click="$router.push('login')">Já possui uma conta ? Logue-se!</a>
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn :loading="submetendo" color="primary" @click="logar">Login</v-btn>
+                <v-btn :loading="submetendo" color="primary" @click="logar">Registrar</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -57,9 +73,10 @@ import backend from "../../backend";
 export default {
   data() {
     return {
-      login: "",
-      senha: "",
-      role: "professor",
+      nome: "",
+      senha1: "",
+      senha2: "",
+      email: "",
       submetendo: false,
       senhaErro: null,
       rules: {
@@ -67,6 +84,8 @@ export default {
         min: v => {
           this.senhaErro = null //Limpa mensagem de erro de senha incorreta vinda da submissão
           return v.length >= 8 || "Min 8 caracteres"},
+        senhasIguais: (senha1, senha2) => senha1 === senha2 || "As senhas são diferentes.",
+        email: v => /.+@.+\..+/.test(v) || 'E-mail inválido',
       }
     };
   },
@@ -74,15 +93,14 @@ export default {
     logar() {
       if(!this.$refs.form.validate()) return;
       this.submetendo = true;
-      let user = { email: this.login, password: this.senha };
+      let user = { email: this.email, password: this.senha1, nome: this.nome };
 
-      axios.post(`${backend.uri}/${this.role}/login`, user).then(res => {
+      axios.post(`${backend.uri}/aluno/create`, user).then(res => {
             let authUser = res.data.data.user;
             window.localStorage.setItem("user", JSON.stringify(authUser));
             this.$cookie.set("x-access-token", res.data.data.token, { expires: '1Y' });
             this.$emit("login-status");
-            if (this.role == "professor") this.$router.push("exercicios");
-            else this.$router.push("aluno")
+            this.$router.push("aluno")
         }).catch(e => {
           this.senhaErro = e.response.data.message
         }).finally(()=> {
