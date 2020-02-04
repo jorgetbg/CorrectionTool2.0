@@ -29,7 +29,7 @@ mongoose.connect(process.env.DATABASE, {
 
 app.use(cors({
   credentials: true,
-  origin: "http://localhost:8080"
+  origin: process.env.CORS_ORIGIN_URI
 }))
 app.use(cookieParser())
 app.use(express.json());
