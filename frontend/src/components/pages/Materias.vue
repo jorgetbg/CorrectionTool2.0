@@ -42,7 +42,7 @@
                     <card-exercicio
                       :exercicioNome="exercicio.descricao"
                       :submissoes="`${exercicio.submissoesCount} / ${materia.capacidade}`"
-                      :dataFinal="converterData(exercicio.prazo)"
+                      :dataFinal="exercicio.prazo"
                       :status="exercicio.status"
                       :id="exercicio._id"
                     ></card-exercicio>
