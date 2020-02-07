@@ -39,7 +39,7 @@ module.exports = {
 
   async index(req, res) {
     const pagina =
-      req.query.page !== undefined && req.query.page <= 0 ? 1 : req.query.page;
+      req.query.page == undefined || req.query.page <= 0 ? 1 : req.query.page;
     const itensPorPagina = 10;
     let materias;
     if (req.body.role == "professor")
@@ -47,11 +47,20 @@ module.exports = {
         .limit(itensPorPagina)
         .skip(itensPorPagina * (pagina - 1))
         .populate("professor", "nome");
-    else
-      materias = await Materia.find()
-        .limit(itensPorPagina)
-        .skip(itensPorPagina * (pagina - 1))
-        .populate("professor", "nome"); //populate esta causando +150ms
+    else {
+      let matriculas = await Matricula.find({aluno: req.body.userId})
+      materias = await Materia.find({}, "nome professor capacidade lotacao")
+
+      let matriculaContemMateria = function(materia){
+        for(m of matriculas)
+          if(m.materia == materia) return true
+        return false
+      }
+
+
+      materias = materias.filter(materia => !matriculaContemMateria(materia.id)) //materias onde o aluno não esta matriculado
+      materias = materias.slice((pagina-1) * itensPorPagina, pagina * itensPorPagina)
+    }
 
     materias = materias.map(materia => {
       let m = {
