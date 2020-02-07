@@ -16,7 +16,10 @@
             <div class="subtitle-1 black--text">{{materia.professor}}</div>
           </v-col>
           <v-col class="py-0" md="2">
-            <AdicionarMatricula :materia="materia"/>
+              <AdicionarMatricula v-if="materia.matriculado != true" :materia="materia" :successCallback="realizarMatriculaUI"/>
+              <v-btn v-else disabled>
+                <span>Matriculado</span>
+              </v-btn>
           </v-col>
         </v-row>
       </v-card-text>
@@ -44,6 +47,11 @@ export default {
   },
   components:{
     AdicionarMatricula
+  },
+  methods:{
+    realizarMatriculaUI(materia){
+      materia.matriculado = true;
+    }
   }
 
 }

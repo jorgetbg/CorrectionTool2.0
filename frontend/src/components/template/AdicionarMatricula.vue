@@ -11,14 +11,15 @@
         <h2>Matricula</h2>
       </v-card-title>
       <v-card-text>
+        <v-text-field label="Nome" v-model="materia.nome" readonly></v-text-field>
         <v-form class="px-3" ref="form">
-          <v-text-field label="Nome" v-model="materia.nome" readonly></v-text-field>
           <v-text-field
             label="Senha"
             v-model="senhaMateria"
             :type="exibirSenha ? 'text' : 'password'"
             :rules="[rules.required, rules.min]"
             :append-icon="exibirSenha ? 'mdi-eye' : 'mdi-eye-off'"
+            :error-messages="errorMessage"
             @click:append="exibirSenha = !exibirSenha"
           ></v-text-field>
 
@@ -41,6 +42,7 @@ export default {
     return {
       dialog: false,
       senhaMateria: "",
+      errorMessage: "",
       exibirSenha: false,
       rules: {
         min: v => v.length >= 6 || "Min 6 caracteres",
@@ -58,12 +60,14 @@ export default {
         password: this.senhaMateria,
       }
 
-      axios.post(`${backend.uri}/materia/create`,matricula).then(res=>{
-        this.submetendo = false;
-        if(res.status == 200)
-          this.submetendo = false;
+      axios.post(`${backend.uri}/matricula/create`,matricula).then(()=>{
         this.resetar();
         this.dialog = false
+        this.successCallback(this.materia)
+      }).catch(e => {
+        this.errorMessage = e.response.data.message
+      }).finally(() => {
+        this.submetendo = false;
       })
 
     },
@@ -79,7 +83,7 @@ export default {
     }
   },
   props: {
-    addMateriaCallback:{
+    successCallback:{
       type: Function,
       required: false
     },
