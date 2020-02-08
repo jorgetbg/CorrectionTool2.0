@@ -4,9 +4,9 @@ const Professor = require("../models/Professor");
 
 module.exports = {
   async store(req, res) {
-    const { userId, nome, password } = req.body;
+    const { userId, nome, capacidade, password } = req.body;
 
-    if (!userId || !nome || !password)
+    if (!userId || !nome || !capacidade || !password)
       return res
         .status(400)
         .send({
@@ -22,6 +22,7 @@ module.exports = {
       materia = await Materia.create({
         password,
         nome,
+        capacidade,
         professor: userId
       });
     } catch (e) {
@@ -49,7 +50,7 @@ module.exports = {
         .populate("professor", "nome");
     else {
       let matriculas = await Matricula.find({aluno: req.body.userId})
-      materias = await Materia.find({}, "nome professor capacidade lotacao")
+      materias = await Materia.find({}, "nome professor capacidade lotacao").populate("professor", "nome");
 
       let matriculaContemMateria = function(materia){
         for(m of matriculas)
