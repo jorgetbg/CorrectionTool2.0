@@ -47,6 +47,33 @@ module.exports = {
       return res.status(401).send({ status: "error", message: e, data: null });
     }
   },
+  async getExerciciosAluno(req, res){
+    const {  userId  } = req.body;
+
+    let exercicios
+    try {
+      var id = require('mongodb').ObjectID(userId);
+
+      exercicios = await Matricula.aggregate([
+        {$match: {aluno: id}},
+        {$project: {_id: 0, materia: 1}},
+        {$lookup: {
+          "from": "exercicios",
+          "localField": "materia",
+          "foreignField": "materia",
+          "as": "exercicio"
+        }},
+        {$unset: "materia"},
+        {"$unwind": "$exercicio"},
+
+        
+      ]).sort({"exercicio.prazo": 1})
+    } catch (error) {
+      console.log(error)
+      res.send(300)
+    }
+    res.send(exercicios)
+  },
   async getExerciciosProfessor(req, res){
     const {  userId  } = req.body;
 
