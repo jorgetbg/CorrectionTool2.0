@@ -61,6 +61,14 @@ module.exports = {
           "foreignField": "_id",
           "as": "materia"
         }},
+        {"$unwind": "$materia"},
+        {$lookup: {
+          "from": "professors",
+          "localField": "materia.professor",
+          "foreignField": "_id",
+          "as": "materia.professor"
+        }},
+        {"$unwind": "$materia.professor"},
         {$lookup: {
           "from": "exercicios",
           "localField": "materia._id",
@@ -75,7 +83,7 @@ module.exports = {
         }},
         {$set: {"exercicios": {$size:"$exercicios"}}},
         {$set: {"resolucoes": {$size:"$resolucoes"}}},
-        {$project: {"materia.password": 0, "materia.capacidade": 0,"materia.lotacao": 0, "materia.__v": 0, "__v": 0, "aluno": 0}}
+        {$project: {"materia.password": 0, "materia.capacidade": 0,"materia.lotacao": 0, "materia.__v": 0,"materia.professor.password": 0,"materia.professor.email": 0,"__v": 0, "aluno": 0}}
       ])
     }catch(e){
       return res.status(400).send({ status: "error", message: e, data: null })
