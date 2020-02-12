@@ -103,8 +103,9 @@ export default {
     AdicionarMatricula
   },
   methods: {
-    realizarMatriculaUI(materia) {
+    realizarMatriculaUI(materia, matricula) {
       materia.matriculado = true;
+      this.matriculas.unshift(matricula)
     }
   }
 };

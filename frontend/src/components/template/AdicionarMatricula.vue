@@ -60,10 +60,10 @@ export default {
         password: this.senhaMateria,
       }
 
-      axios.post(`${backend.uri}/matricula/create`,matricula).then(()=>{
+      axios.post(`${backend.uri}/matricula/create`,matricula).then(res=>{
         this.resetar();
         this.dialog = false
-        this.successCallback(this.materia)
+        this.successCallback(this.materia, res.data.data.matricula[0])
       }).catch(e => {
         this.errorMessage = e.response.data.message
       }).finally(() => {
