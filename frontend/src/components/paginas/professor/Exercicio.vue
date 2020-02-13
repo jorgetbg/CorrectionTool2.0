@@ -113,10 +113,10 @@
 </template>
 
 <script>
-import dataMixin from "../../util/date";
-import CardExercicio from "../template/CardExercicio";
-import CardSubmissao from "../template/CardSubmissao";
-import backend from "../../backend";
+import dataMixin from "../../../util/date";
+import CardExercicio from "../../template/CardExercicio";
+import CardSubmissao from "../../template/CardSubmissao";
+import backend from "../../../backend";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 

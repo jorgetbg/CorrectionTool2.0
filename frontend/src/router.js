@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Materias from './components/pages/Materias'
-import Exercicios from './components/pages/Exercicios'
-import Exercicio from './components/pages/Exercicio'
-import Login from './components/pages/Login'
-import Aluno from './components/pages/Aluno'
-import Register from './components/pages/Register'
+import Materias from './components/paginas/professor/Materias'
+import Exercicios from './components/paginas/professor/Exercicios'
+import Exercicio from './components/paginas/professor/Exercicio'
+import Login from './components/paginas/Login'
+import Aluno from './components/paginas/aluno/Aluno'
+import Register from './components/paginas/Register'
 Vue.use(Router)
 
 let router = new Router({

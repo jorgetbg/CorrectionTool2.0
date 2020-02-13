@@ -70,8 +70,8 @@
 </template>
 
 <script>
-import AdicionarMatricula from "../template/AdicionarMatricula";
-import backend from "../../backend";
+import AdicionarMatricula from "../../template/AdicionarMatricula";
+import backend from "../../../backend";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 export default {

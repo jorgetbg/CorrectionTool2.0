@@ -44,9 +44,9 @@
 
 
 <script>
-import CardExercicio from "../template/CardExercicio";
-import AdicionarExercicio from "../template/AdicionarExercicio";
-import backend from '../../backend'
+import CardExercicio from "../../template/CardExercicio";
+import AdicionarExercicio from "../../template/AdicionarExercicio";
+import backend from '../../../backend'
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 

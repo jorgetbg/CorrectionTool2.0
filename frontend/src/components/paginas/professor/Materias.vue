@@ -59,10 +59,10 @@
 
 
 <script>
-import dataMixin from '../../util/date'
-import CardExercicio from "../template/CardExercicio";
-import AdicionarMateria from "../template/AdicionarMateria"
-import backend from '../../backend'
+import dataMixin from '../../../util/date'
+import CardExercicio from "../../template/CardExercicio";
+import AdicionarMateria from "../../template/AdicionarMateria"
+import backend from '../../../backend'
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 
