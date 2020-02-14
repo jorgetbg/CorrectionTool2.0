@@ -4,7 +4,8 @@ import Materias from './components/paginas/professor/Materias'
 import Exercicios from './components/paginas/professor/Exercicios'
 import Exercicio from './components/paginas/professor/Exercicio'
 import Login from './components/paginas/Login'
-import Aluno from './components/paginas/aluno/Aluno'
+import AlunoMateria from './components/paginas/aluno/Materias'
+import AlunoMatricula from './components/paginas/aluno/Matricula'
 import Register from './components/paginas/Register'
 Vue.use(Router)
 
@@ -30,9 +31,15 @@ let router = new Router({
       meta: { requiresAuth: true, role: "professor" }
     },
     {
-      path: '/aluno',
+      path: '/aluno/materias',
       name: 'aluno',
-      component: Aluno,
+      component: AlunoMateria,
+      meta: { requiresAuth: true, role: "aluno" }
+    },
+    {
+      path: '/aluno/matricula',
+      name: 'matricula',
+      component: AlunoMatricula,
       meta: { requiresAuth: true, role: "aluno" }
     },
     {
@@ -62,7 +69,7 @@ router.beforeEach((to, from, next) => {
         if(user.role == "professor")
           next()
         else
-          next('/aluno')
+          next('/aluno/materias')
       }else if(requerAluno){ //Rota aluno
         if(user.role == "aluno")
           next()
@@ -77,7 +84,7 @@ router.beforeEach((to, from, next) => {
       if(user.role == "professor")
         next("/exercicios")
       else
-        next("aluno")
+        next("/aluno/materias")
     }
   }
 })

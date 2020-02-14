@@ -31,46 +31,10 @@
         </v-col>
       </v-row>
     </div>
-    <span class="title">Outras matérias</span>
-    <v-card
-      flat
-      v-for="(materia, i) in materias"
-      :key="i"
-      class="my-3"
-      :loading="materia.carregando"
-    >
-      <v-card-text>
-        <v-row class="py-0">
-          <v-col class="py-0" md="6">
-            <div class="caption grey--text">Nome da Matéria</div>
-            <div class="subtitle-1 black--text">{{materia.nome}}</div>
-          </v-col>
-          <v-col class="py-0" md="2">
-            <div class="caption grey--text">Capacidade</div>
-            <div class="subtitle-1 black--text">{{materia.lotacao}}/{{materia.capacidade}}</div>
-          </v-col>
-          <v-col class="py-0" md="2">
-            <div class="caption grey--text">Professor</div>
-            <div class="subtitle-1 black--text">{{materia.professor}}</div>
-          </v-col>
-          <v-col class="py-0" md="2">
-            <AdicionarMatricula
-              v-if="materia.matriculado != true"
-              :materia="materia"
-              :successCallback="realizarMatriculaUI"
-            />
-            <v-btn v-else disabled>
-              <span>Matriculado</span>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
   </v-container>
 </template>
 
 <script>
-import AdicionarMatricula from "../../template/AdicionarMatricula";
 import backend from "../../../backend";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -99,15 +63,6 @@ export default {
       this.matriculas = res.data.data.matriculas
     })
   },
-  components: {
-    AdicionarMatricula
-  },
-  methods: {
-    realizarMatriculaUI(materia, matricula) {
-      materia.matriculado = true;
-      this.matriculas.unshift(matricula)
-    }
-  }
 };
 </script>
 

@@ -18,7 +18,7 @@
       <v-list >
       <v-list-item-group >
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in (user.role === 'professor' ? professor : aluno)"
           :key="i"
           router :to="item.route"
         >
@@ -54,9 +54,13 @@ export default {
   data() {
     return {
       drawer: false,
-      items: [
+      professor: [
         { text: 'Exercicios', icon: 'home_work', route:"/exercicios" },
         { text: 'Matérias', icon: 'group', route:"/materias" },
+      ],
+      aluno:[
+        { text: 'Matérias', icon: 'school', route:"/aluno/materias" },
+        { text: 'Matricula', icon: 'playlist_add', route:"/aluno/matricula" },
       ],
     };
   },
