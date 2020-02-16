@@ -1,9 +1,9 @@
 <template>
   <v-dialog max-width="600px" v-model="dialog">
     <template v-slot:activator="{ on }">
-      <v-btn class="amber accent-3" text v-on="on">
+      <v-btn class="amber accent-3" text v-on="on" block>
         <v-icon>playlist_add</v-icon>
-        <span>Matricular-se</span>
+        <span>Matricula</span>
       </v-btn>
     </template>
     <v-card>

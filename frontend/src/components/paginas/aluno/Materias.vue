@@ -6,18 +6,18 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col v-for="(matricula, i) in matriculas" :key="i" md="6">
+        <v-col v-for="(matricula, i) in matriculas" :key="i" lg="6" cols="12" >
           <v-card flat class="mb-1 px-3" :loading="matricula.carregando">
             <v-row class="py-1">
-              <v-col md="6">
+              <v-col sm="6" cols="12">
                 <div class="caption grey--text">Nome da matéria</div>
                 <div class="subtitle-1 black--text">{{matricula.materia.nome}}</div>
               </v-col>
-              <v-col md="4">
+              <v-col sm="4" cols="8">
                 <div class="caption grey--text">Professor</div>
                 <div class="subtitle-1 black--text">{{matricula.materia.professor.nome}}</div>
               </v-col>
-              <v-col md="2">
+              <v-col sm="2" cols="4">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-badge
