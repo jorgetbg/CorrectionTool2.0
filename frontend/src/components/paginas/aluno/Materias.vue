@@ -7,7 +7,7 @@
       </v-row>
       <v-row>
         <v-col v-for="(matricula, i) in matriculas" :key="i" lg="6" cols="12" >
-          <v-card flat class="mb-1 px-3" :loading="matricula.carregando">
+          <v-card flat class="mb-1 px-3" :loading="matricula.carregando" router :to="`/aluno/materia/${matricula.materia._id}`">
             <v-row class="py-1">
               <v-col sm="6" cols="12">
                 <div class="caption grey--text">Nome da matéria</div>

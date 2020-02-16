@@ -100,7 +100,7 @@ module.exports = {
         "aluno"
       );
     } catch (e) {
-      return res.status(400).send({ status: "error", message: e, data: null });
+        return res.status(400).send({ status: "error", message: e, data: null });
     }
 
     let alunosMatriculados = matriculas.map(matricula => {
@@ -117,5 +117,27 @@ module.exports = {
         message: "Alunos obtidos com sucesso!!!",
         data: { alunos: alunosMatriculados }
       });
+  },
+  async show(req, res) {
+    const materiaId = req.params.materiaId;
+    let materia = null
+    if(!materiaId)
+      throw "Id da matéria não informado"
+    try{
+      materia = await Materia.findById(materiaId, "nome professor capacidade lotacao").populate("professor", "nome")
+      if(!materia)
+        throw "Matéria inexistente"
+    }
+    catch(e){
+      return res.status(400).send({ status: "error", message: e, data: null });
+    }
+    return res
+      .status(200)
+      .send({
+        status: "success",
+        message: "Matéria obtidos com sucesso!!!",
+        data: materia
+      });
+
   }
 };

@@ -4,8 +4,9 @@ import Materias from './components/paginas/professor/Materias'
 import Exercicios from './components/paginas/professor/Exercicios'
 import Exercicio from './components/paginas/professor/Exercicio'
 import Login from './components/paginas/Login'
-import AlunoMateria from './components/paginas/aluno/Materias'
+import AlunoMaterias from './components/paginas/aluno/Materias'
 import AlunoMatricula from './components/paginas/aluno/Matricula'
+import AlunoMateria from './components/paginas/aluno/Materia'
 import Register from './components/paginas/Register'
 Vue.use(Router)
 
@@ -32,14 +33,20 @@ let router = new Router({
     },
     {
       path: '/aluno/materias',
-      name: 'aluno',
-      component: AlunoMateria,
+      name: 'alunoMaterias',
+      component: AlunoMaterias,
       meta: { requiresAuth: true, role: "aluno" }
     },
     {
       path: '/aluno/matricula',
-      name: 'matricula',
+      name: 'alunoMatricula',
       component: AlunoMatricula,
+      meta: { requiresAuth: true, role: "aluno" }
+    },
+    {
+      path: '/aluno/materia/:id',
+      name: 'alunoMateria',
+      component: AlunoMateria,
       meta: { requiresAuth: true, role: "aluno" }
     },
     {
