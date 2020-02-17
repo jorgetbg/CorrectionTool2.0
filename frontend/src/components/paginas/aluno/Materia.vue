@@ -4,42 +4,107 @@
       <v-card-text>
         <span class="title black--text">{{materia.nome}}</span>
         <v-expansion-panels class="mt-3">
-          <v-expansion-panel v-for="exercicio in exercicios" :key="exercicio._id" :class="`${exercicio.prazo - new Date().getTime() > 0 ? 'adiantado' : 'atrazado'}`">
-            <v-expansion-panel-header class="font-weight-bold subtitle-1">{{exercicio.descricao}}</v-expansion-panel-header>
+          <v-expansion-panel
+            @change="buscarResolucao(exercicio)"
+            :class="`${exercicio.prazo - new Date().getTime() > 0 ? 'adiantado' : 'atrazado'}`"
+            v-for="exercicio in exercicios"
+            :key="exercicio._id"
+          >
+            <v-expansion-panel-header>
+              <v-row class="pa-0" justify="space-between">
+                <v-col class="pa-0" md="4">
+                  <span class="font-weight-bold subtitle-1">{{exercicio.descricao}}</span>
+                </v-col>
+                <v-col class="pa-0" md="2">
+                  <v-icon
+                    :color="`${exercicio.prazo - new Date().getTime() > 0 ? 'green' : 'red'}`"
+                  >alarm</v-icon>
+                  <span
+                    :class="`${exercicio.prazo - new Date().getTime() > 0 ? 'green--text' : 'red--text'}`"
+                  >{{converterData(exercicio.prazo)}}</span>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-header>
             <v-expansion-panel-content>
-              {{exercicio.descricao}}
+              <p>{{exercicio.descricao}}</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero magnam reiciendis hic nam, illum, voluptate doloribus ullam quisquam sapiente ex ipsam illo iure corrupti necessitatibus iusto exercitationem. Eos, autem voluptate. Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur commodi sit dolorum dolores corporis aliquid corrupti! Dolorum dolore ex nisi omnis illum placeat non eligendi est voluptatibus, distinctio, esse animi. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Assumenda itaque sunt amet explicabo corporis maxime ducimus eligendi mollitia? Distinctio necessitatibus ad dolore velit provident, odit dignissimos assumenda reprehenderit quidem beatae? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, temporibus rem quod pariatur consequuntur quaerat fugiat praesentium consectetur inventore excepturi quo similique unde dignissimos quasi illum autem tenetur voluptate necessitatibus.lore Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio nam, accusamus voluptas temporibus nobis deleniti omnis enim eum saepe soluta quis est ut praesentium aliquam harum ipsum earum! Dolores, ea! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati nisi rem officia natus tempora odio quis necessitatibus fugiat. Eum, dolores distinctio. Voluptate suscipit quam, ex autem animi eos voluptatum neque?</p>
+              <div v-if="exercicio.resolucao">
+                <span class="font-weight-bold subtitle-1">Sua resolução: </span>
+                <a
+                  :href="`${backendUri}/resolucao/${exercicio.resolucao._id}/download`"
+                >{{exercicio.resolucao.resolucaoFilename}}</a>
+                <span>, submetido em</span>
+                <span>{{converterData(exercicio.resolucao.dataSubmissao)}}</span>
+              </div>
+              <div v-else>
+                <span class="font-weight-bold subtitle-1">Você ainda não submeteu uma resolução.</span>
+              </div>
               <v-divider class="my-2" />
               <v-row>
                 <v-col>
-                    <v-form :ref="`form-${exercicio._id}`">
-                        <v-file-input accept=".m" label="Enviar" v-model="exercicio.file" :rules="[regras.required]"></v-file-input>
-                    </v-form>
+                  <v-form :ref="`form-${exercicio._id}`">
+                    <v-file-input
+                      accept=".m"
+                      label="Enviar"
+                      v-model="exercicio.file"
+                      :rules="[regras.required]"
+                    ></v-file-input>
+                  </v-form>
                 </v-col>
               </v-row>
               <v-row class="align-center justify-end">
-                    <v-btn text class="mx-6">
-                        <v-icon>help_outline</v-icon>
-                        <span>Ajuda</span>
+                <v-btn text class="mx-6">
+                  <v-icon>help_outline</v-icon>
+                  <span>Ajuda</span>
+                </v-btn>
+                <v-dialog max-width="600px" v-model="dialogConfirmacao" v-if="exercicio.resolucao">
+                  <template v-slot:activator="{ on }">
+                    <v-btn outlined color="green" v-on="on">
+                      <span>Enviar</span>
                     </v-btn>
-                    <v-btn text @click="upload(exercicio)">
-                        <span class="black--text font-weight-bold">Enviar</span>
-                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>Cuidado</v-card-title>
+                    <v-card-text>
+                      <span class="subtitle-1 black--text">A submissão dessa atividade irá sobrescrever a submissão anterior (<b>{{exercicio.resolucao.resolucaoFilename}}</b>). Você tem certeza que deseja prosseguir ?</span>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-btn text color="red" @click="dialogConfirmacao = false">
+                        Cancelar
+                      </v-btn>
+                      <v-spacer></v-spacer>
+                      <v-btn outlined color="green" @click="upload(exercicio)">
+                        Enviar
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+                <v-btn outlined color="green" @click="upload(exercicio)" v-else>
+                        Enviar
+                </v-btn>
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+        <template v-if="exercicios.length == 0">
+          <span class="subtitle-1 black--text">Esta matéria ainda não possui nenhum exercício. Aguarde até que seu professor libere algum exercícios.</span>
+        </template>
       </v-card-text>
     </v-card>
   </v-container>
 </template>
 
 <script>
+import dataMixin from "../../../util/date";
 import backend from "../../../backend";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 export default {
+  mixins: [dataMixin],
   data() {
     return {
+      backendUri: backend.uri,
+      dialogConfirmacao: false,
       materia: {
         nome: "",
         professor: ""
@@ -47,33 +112,44 @@ export default {
       exercicios: [{}],
       carregando: true,
       regras: {
-          required: value => !!value || "Obrigatório.",
+        required: value => !!value || "Obrigatório."
       },
       ev: null
     };
   },
-  methods:{
-      upload(exercicio){
-
-        if(this.$refs[`form-${exercicio._id}`][0].validate()){
-            let formData = new FormData()
-            formData.append('arquivoResolucao', exercicio.file);
-            formData.append('exercicioId', exercicio._id);
-            axios.post(`${backend.uri}/resolucao/submit`, formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
-                }
-            }).then(res => {
-             /* eslint-disable no-console */
-             console.log(res)
+  methods: {
+    upload(exercicio) {
+      if (this.$refs[`form-${exercicio._id}`][0].validate()) {
+        let formData = new FormData();
+        formData.append("arquivoResolucao", exercicio.file);
+        formData.append("exercicioId", exercicio._id);
+        axios
+          .post(`${backend.uri}/resolucao/submit`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(res => {
+            /* eslint-disable no-console */
+            console.log(res);
             /* eslint-enable no-console */
-            }).catch(e => {
-                /* eslint-disable no-console */
-                console.log(e.response)
-                /* eslint-enable no-console */
-            })
-        }
-      }
+          })
+          .catch(e => {
+            /* eslint-disable no-console */
+            console.log(e.response);
+            /* eslint-enable no-console */
+          });
+      }else
+        this.dialogConfirmacao = false
+    },
+    buscarResolucao(exercicio) {
+      if (!exercicio.resolucaoBuscada)
+        axios.get(`${backend.uri}/resolucao/${exercicio._id}`).then(res => {
+          exercicio.resolucao = res.data.data.resolucao;
+          exercicio.resolucaoBuscada = true;
+          this.$forceUpdate();
+        });
+    }
   },
   created() {
     axios
@@ -91,15 +167,14 @@ export default {
 };
 </script>
 <style>
-
-.atrazado .v-expansion-panel-header, .atrazado .v-expansion-panel-content{
-    border-left: 4px solid tomato;
+.atrazado .v-expansion-panel-header,
+.atrazado .v-expansion-panel-content {
+  border-left: 4px solid tomato;
 }
-.adiantado .v-expansion-panel-header, .adiantado .v-expansion-panel-content{
-    border-left: 4px solid #3cd1c2;
+.adiantado .v-expansion-panel-header,
+.adiantado .v-expansion-panel-content {
+  border-left: 4px solid #3cd1c2;
 }
-
-
 </style>
 
 

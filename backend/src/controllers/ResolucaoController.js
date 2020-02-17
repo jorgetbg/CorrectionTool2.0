@@ -99,7 +99,7 @@ module.exports = {
     try {
       resolucao = await Resolucao.findOne(
         { exercicio: exercicioId, aluno: userId },
-        "exercicio resolucaoFilename tentativas dataSubmissão status"
+        "exercicio resolucaoFilename tentativas dataSubmissao status"
       );
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null });
