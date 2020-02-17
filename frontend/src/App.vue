@@ -41,7 +41,7 @@ checarAutenticacao(){
   },
   created(){
     this.checarAutenticacao()
-    if(this.$router.currentRoute.name != "login")
+    if(!this.$router.resolve(this.$router.currentRoute.name))
       this.$router.push("login")
   },
 };
