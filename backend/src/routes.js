@@ -12,6 +12,7 @@ const ExercicioController = require('./controllers/ExercicioController');
 const SessionController = require('./controllers/SessionController');
 const ResolucaoController = require('./controllers/ResolucaoController');
 const TesteController = require('./controllers/TesteController');
+const DockerController = require('./controllers/DockerController');
 
 const routes = express.Router();
 const upload = multer(uploadConfig);
@@ -47,6 +48,9 @@ routes.get('/resolucao/:resolucaoId/download',(req, res, next) => SessionControl
 //Testes
 routes.post('/testes/create',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.store)
 routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.getTestesExercicio)
+
+routes.get('/docker',DockerController.executarContainer)
+
 
 
 // routes.post('/sessions', SessionController.store);
