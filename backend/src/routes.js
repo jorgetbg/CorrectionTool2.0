@@ -51,6 +51,8 @@ routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionControlle
 
 routes.get('/rundocker',DockerController.executarContainer)
 
+routes.post('/docker',DockerController.containerCallback)
+
 
 
 // routes.post('/sessions', SessionController.store);

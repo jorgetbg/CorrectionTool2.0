@@ -29,13 +29,18 @@ module.exports = {
 
         
        res.sendStatus(200)
-    }
+    },
+    async containerCallback(req,res){
+        console.log(req.body)
+        res.sendStatus(200)
+    },
 }
 function getDocker(){
     if(docker == null)
         docker = new Docker()
     return docker
 }
+
 
 function getContainer(){
     return new Promise((resolve, reject) => {
