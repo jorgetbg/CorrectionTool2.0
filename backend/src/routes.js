@@ -49,7 +49,7 @@ routes.get('/resolucao/:resolucaoId/download',(req, res, next) => SessionControl
 routes.post('/testes/create',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.store)
 routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.getTestesExercicio)
 
-routes.get('/docker',DockerController.executarContainer)
+routes.get('/rundocker',DockerController.executarContainer)
 
 
 

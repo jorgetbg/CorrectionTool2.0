@@ -1,0 +1,5 @@
+{
+	"algorithm" : "./opt/corretor/Exemplo/quad_1.m",
+	"inputs" : ["./opt/corretor/Exemplo/input_001.csv"],
+	"output" : "./out_teste.csv"
+}

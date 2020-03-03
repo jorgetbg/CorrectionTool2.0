@@ -1,7 +1,7 @@
 import meta_language as ml
 import os
 import json
-
+import sys
 
 
 """
@@ -58,24 +58,6 @@ x.execute = octave_execute
 x.pos_process = octave_process
 
 # ------------------------------------------------------------------------------
-"""
-# how to execute :
-sss = {
-    "algorithm" : "./Exemplo/teste.m" ,
-    "inputs" : ["./Exemplo/input_1.csv"],
-    "output" : "./Exemplo/output_1.csv"
-    }
-sss = json.dumps(sss)
+#  starting process
 
-# how to compare:
-
-sss = {
-    "algorithm" : "./Exemplo/teste.m" ,
-    "inputs" : ["./Exemplo/input_1.csv","./Exemplo/input_1.csv"],
-    "output" : "./Exemplo/output_1.csv"
-    }
-sss = json.dumps(sss)
-"""
-sss = input()
-ml.init(sss)
-
+ml.init()

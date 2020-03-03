@@ -1,4 +1,7 @@
 import json
+import sys
+import requests
+
 # tags to define how to split
 # l = lines, c = columns
 split_tag_l = "\n"
@@ -13,14 +16,13 @@ def csv_load(url):
 			x = file.read().split(split_tag_l)
 			x = list(map(lambda a:a.split(split_tag_c),x))
 	except: return [[]]
-	try: 
+	try:
 		while(x[-1]==['']): x.pop(-1);
 	except:return [[]]
 	return x
 
 # get "metadata" from url
 class Url:
-	
 	# spliting url
 	def __init__(self,path):
 		self.file = path.split("/")[-1]
@@ -102,12 +104,30 @@ def starting(jstr):
          out = open(output.url,"w")
          out.write(ret)
          out.close()
-         return "Done"
+         return "done"
     return ret
-        
 
-def init(jstr):
-    ret = starting(jstr)
-    print(ret)
+def json_from_file(jfile):
+    try : jfile = open(jfile,"r")
+    except: return "__Error__ : file.json not find"
+
+    try:
+        ret = starting(jfile.read())
+        jfile.close()
+    except: ret = "__Error__ : file.json contain errors"
     
+    return ret
 
+def init():
+    args = sys.argv
+    args.pop(0)
+    for path in sys.argv:
+        ret = json_from_file(path)
+        #print(ret)
+        if "__Error__" in ret :
+            jsn = '{"status":"error","message":\"'+ret+'\","data":null}'
+            a=requests.post(url="http://54.233.208.242/api/docker",data=jsn)
+        else:
+            jsn = '{"status":"success","message":\"'+ret+'\","data":"'+path+'"}'
+            a=requests.post(url="http://54.233.208.242/api/docker",data=jsn)
+        print(jsn)
