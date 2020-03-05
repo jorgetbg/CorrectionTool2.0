@@ -18,7 +18,7 @@ const server = http.Server(app);
 mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
+}).then(()=>console.log("Conectado ao banco de dados.")).catch(err => console.error(err))
 
 
 // GET, POST, PUT, DELETE

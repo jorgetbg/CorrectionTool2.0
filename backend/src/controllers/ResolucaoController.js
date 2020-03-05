@@ -1,6 +1,7 @@
 const Resolucao = require("../models/Resolucao");
 const Exercicio = require("../models/Exercicio");
 const FileUploadController = require("./FileUploadController");
+const DockerController = require("../controllers/DockerController")
 const fs = require("fs");
 const path = require("path");
 
@@ -48,6 +49,7 @@ module.exports = {
         await exercicio.save()
       }
       FileUploadController.rename(tempPath, definitivoPath, originalname);
+      corrigirResolucao(resolucao)
     } catch (e) {
       if (req.file)
         fs.unlink(req.file.path, e => {
@@ -141,3 +143,7 @@ module.exports = {
     res.download(filePath, resolucao.resolucaoFilename)
   }
 };
+
+async function corrigirResolucao(resolucao){
+  DockerController.corrigirResolucao(resolucao)
+}
