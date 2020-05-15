@@ -18,7 +18,7 @@
           <v-stepper v-model="stepperAtivo">
             <v-stepper-header>
               <template v-for="n in testes.length">
-                <v-stepper-step                
+                <v-stepper-step
                   :key="`${n}-step`"
                   :complete="stepperAtivo > n"
                   :step="n"
@@ -40,49 +40,67 @@
 
             <v-stepper-items>
               <v-stepper-content v-for="n in testes.length" :key="`${n}-content`" :step="n">
-                <span class="title">Entrada:</span>
-                <v-container>
+                  <span class="title">Entrada:</span>
                   <v-row align="start">
                     <v-col v-for="(teste, i) in testes[n - 1].input" :key="i" md="2">
                       <v-text-field :value="teste" outlined readonly></v-text-field>
                     </v-col>
                   </v-row>
-                </v-container>
                 <span class="title">Saida:</span>
                 <v-textarea rows="1" :value="testes[n-1].output" outlined readonly></v-textarea>
+                <div v-if="testes[n-1].isPrivate">
+                  <v-icon small>lock</v-icon>
+                  <span>Este teste é privado</span>
+                </div>
               </v-stepper-content>
-              <v-stepper-content  step="+">
+              <v-stepper-content step="+">
                 <v-form ref="form">
                   <span class="title">Entrada:</span>
                   {{testeSendoAdicionado.input}}
-                  <v-container>
                     <v-row align="start">
-                        <v-col md="2"  v-for="i in testeSendoAdicionado.input.length + 1" :key="i" class="ml-2">
-                          <v-text-field v-model="testeSendoAdicionado.input[i-1]" outlined :label="`Argumento ${i}`"></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="1">
-                          <v-btn text fab @click="testeSendoAdicionado.input.pop()"><v-icon>remove</v-icon></v-btn>
-                        </v-col>
+                      <v-col
+                        md="2"
+                        v-for="i in testeSendoAdicionado.input.length + 1"
+                        :key="i"
+                        class="mr-2"
+                      >
+                        <v-text-field
+                          v-model="testeSendoAdicionado.input[i-1]"
+                          outlined
+                          :label="`Argumento ${i}`"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="1">
+                        <v-btn text fab @click="testeSendoAdicionado.input.pop()">
+                          <v-icon>remove</v-icon>
+                        </v-btn>
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col>
-                        <v-textarea v-model="testeSendoAdicionado.output" outlined rows="3" :rules="rules"></v-textarea>
+                        <v-textarea
+                          v-model="testeSendoAdicionado.output"
+                          outlined
+                          rows="3"
+                          :rules="rules"
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-checkbox v-model="testeSendoAdicionado.isPrivate" label="Teste privado"></v-checkbox>
                       </v-col>
                     </v-row>
                     <v-row justify="end">
                       <v-col class="mx-2" md="1">
-                        <v-btn @click="limparForm">
-                          Limpar
-                        </v-btn>
+                        <v-btn @click="limparForm">Limpar</v-btn>
                       </v-col>
                       <v-col md="1">
                         <v-btn class="success" @click="adicionarTeste" :loading="salvandoTeste">
-                          <v-icon>add</v-icon>
-                          Salvar
+                          <v-icon>add</v-icon>Salvar
                         </v-btn>
                       </v-col>
                     </v-row>
-                  </v-container>
                 </v-form>
               </v-stepper-content>
             </v-stepper-items>
@@ -144,10 +162,11 @@ export default {
       ],
       testeSendoAdicionado: {
         input: [],
-        output: ""
+        output: "",
+        isPrivate: false
       },
       testes: [],
-      rules: [ value => !!value || "Obrigatório."]
+      rules: [value => !!value || "Obrigatório."]
     };
   },
   components: {
@@ -160,24 +179,24 @@ export default {
       console.log(a);
       /* eslint-enable no-console */
     },
-    limparForm(){
-      this.$refs.form.reset()
+    limparForm() {
+      this.$refs.form.reset();
       this.testeSendoAdicionado = {
         input: [],
-        output: ""
-      }
+        output: "",
+        isPrivate: false
+      };
     },
-    adicionarTeste(){
-      if(this.$refs.form.validate()){
-        this.salvandoTeste = true
-        let testeClone = JSON.parse(JSON.stringify(this.testeSendoAdicionado))
-        this.testes.push(testeClone)
-        testeClone.exercicioId = this.$route.params.id
+    adicionarTeste() {
+      if (this.$refs.form.validate()) {
+        this.salvandoTeste = true;
+        let testeClone = JSON.parse(JSON.stringify(this.testeSendoAdicionado));
+        this.testes.push(testeClone);
+        testeClone.exercicioId = this.$route.params.id;
         axios.post(`${backend.uri}/testes/create`, testeClone).then(() => {
-          this.salvandoTeste = false
-          this.limparForm()
-        })
-
+          this.salvandoTeste = false;
+          this.limparForm();
+        });
       }
     }
   },
@@ -193,8 +212,8 @@ export default {
         }),
       axios
         .get(`${backend.uri}/exercicio/${this.$route.params.id}/testes`)
-        .then(res =>{
-          this.testes = res.data.data.testes
+        .then(res => {
+          this.testes = res.data.data.testes;
         })
     ];
 

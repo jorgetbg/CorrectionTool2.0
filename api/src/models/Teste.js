@@ -14,6 +14,10 @@ const testeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Exercicio',
         required: true
+    },
+    isPrivate: {
+        type: Boolean,
+        default: false
     }
 })
 
