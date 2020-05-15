@@ -1,0 +1,17 @@
+{
+  "projects": [
+    {
+      "id": "M95FS0-zDP",
+      "path": "/var/spa",
+      "favorite": 0,
+      "type": "vue",
+      "name": "spa",
+      "openDate": 1589304862242
+    }
+  ],
+  "foldersFavorite": [],
+  "tasks": [],
+  "config": {
+    "lastOpenProject": "M95FS0-zDP"
+  }
+}

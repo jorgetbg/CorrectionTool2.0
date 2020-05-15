@@ -41,7 +41,10 @@ checarAutenticacao(){
   },
   created(){
     this.checarAutenticacao()
-    if(!this.$router.resolve(this.$router.currentRoute.name))
+    /* eslint-disable no-console */
+    console.log(this.$router.currentRoute)
+    /* eslint-enable no-console */
+    if(this.$router.currentRoute.name == null || !this.$router.resolve(this.$router.currentRoute.name))
       this.$router.push("login")
   },
 };

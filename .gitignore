@@ -1,10 +1,12 @@
-/backend/node_modules
-/backend/.env
+/api/node_modules
+/api/.env
 
 node_modules/
 
 yarn.lock
 
-backend/uploads/
+api/uploads/
 
-backend/temp/
+api/temp/
+
+api/dist/
