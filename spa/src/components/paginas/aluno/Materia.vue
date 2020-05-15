@@ -13,7 +13,7 @@
             <v-expansion-panel-header>
               <v-row class="pa-0" justify="space-between">
                 <v-col class="pa-0" md="4">
-                  <span class="font-weight-bold subtitle-1">{{exercicio.descricao}}</span>
+                  <span class="font-weight-bold subtitle-1">{{exercicio.titulo}}</span>
                 </v-col>
                 <v-col class="pa-0" md="2">
                   <v-icon
@@ -27,8 +27,6 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>{{exercicio.descricao}}</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero magnam reiciendis hic nam, illum, voluptate doloribus ullam quisquam sapiente ex ipsam illo iure corrupti necessitatibus iusto exercitationem. Eos, autem voluptate. Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur commodi sit dolorum dolores corporis aliquid corrupti! Dolorum dolore ex nisi omnis illum placeat non eligendi est voluptatibus, distinctio, esse animi. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Assumenda itaque sunt amet explicabo corporis maxime ducimus eligendi mollitia? Distinctio necessitatibus ad dolore velit provident, odit dignissimos assumenda reprehenderit quidem beatae? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, temporibus rem quod pariatur consequuntur quaerat fugiat praesentium consectetur inventore excepturi quo similique unde dignissimos quasi illum autem tenetur voluptate necessitatibus.lore Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio nam, accusamus voluptas temporibus nobis deleniti omnis enim eum saepe soluta quis est ut praesentium aliquam harum ipsum earum! Dolores, ea! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati nisi rem officia natus tempora odio quis necessitatibus fugiat. Eum, dolores distinctio. Voluptate suscipit quam, ex autem animi eos voluptatum neque?</p>
-
               <div v-if="exercicio.testes && exercicio.testes.length > 0">
                 <h3>Testes</h3>
                 <v-stepper v-model="testeAtivo" class="my-4">

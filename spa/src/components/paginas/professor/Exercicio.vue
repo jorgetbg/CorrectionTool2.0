@@ -6,14 +6,16 @@
           <card-exercicio
             flat
             class="px-2 my-3"
-            :exercicioNome="exercicio.descricao"
+            :exercicioNome="exercicio.titulo"
             :materiaNome="exercicio.materia.nome"
             :submissoes="exercicio.submissoesCount"
             :dataFinal="exercicio.prazo"
             :status="exercicio.status"
           />
         </v-flex>
-
+        <v-container>
+          <span>{{exercicio.descricao}}</span>
+        </v-container>
         <v-flex>
           <v-stepper v-model="stepperAtivo">
             <v-stepper-header>

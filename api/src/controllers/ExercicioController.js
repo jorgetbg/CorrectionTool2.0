@@ -4,12 +4,12 @@ const Matricula = require("../models/Matricula");
 
 module.exports = {
   async store(req, res) {
-    const { materiaId, descricao, prazo, nota, userId } = req.body;
+    const { materiaId, titulo, descricao, prazo, nota, userId } = req.body;
 
     let materia, exercicio;
 
     try {
-      if (!materiaId || !descricao || !prazo || !nota)
+      if (!materiaId || !titulo || !descricao || !prazo || !nota)
         throw "Informações inválidas..";
 
       materia = await Materia.findById(materiaId);
@@ -18,6 +18,7 @@ module.exports = {
         throw "Esta matéria não pertence a esse usuário.";
 
       exercicio = await Exercicio.create({
+        titulo,
         descricao,
         prazo,
         nota,
@@ -25,7 +26,6 @@ module.exports = {
         materia: materiaId
       })
       exercicio = await exercicio.populate("materia", "nome").execPopulate()
-      console.log(exercicio)
     } catch (e) {
       return res.status(401).send({ status: "error", message: e, data: null });
     }
@@ -91,7 +91,7 @@ module.exports = {
         }}, //Mesmo que o populate(materia)
         {"$unwind": "$materia"}, //Tira matéria do array
         {$match: { "materia.professor": id }}, //Exercicio pertente a matéria do professor
-        {$project: {_id: 1, status: 1, descricao: 1, prazo: 1, nota: 1, submissoesCount:1, "materia.nome": 1}} //Filtra apenas campos relevantes
+        {$project: {_id: 1, titulo:1,status: 1, descricao: 1, prazo: 1, nota: 1, submissoesCount:1, "materia.nome": 1}} //Filtra apenas campos relevantes
       ])
       /*
       exercicios = await Exercicio.aggregate( [ { $group : { 

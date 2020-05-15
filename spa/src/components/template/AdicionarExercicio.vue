@@ -11,10 +11,15 @@
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
+          <v-text-field
+            label="Titulo"
+            v-model="titulo"
+            :rules="[rules.required, rules.min]"
+          ></v-text-field>
           <v-textarea
             rows="3"
             auto-grow
-            label="Descricao"
+            label="Descrição"
             v-model="descricao"
             :rules="[rules.required, rules.min]"
           ></v-textarea>
@@ -40,9 +45,20 @@
             ref="datepicker"
           >
             <template v-slot:activator="{ on }">
-              <v-text-field :value="dataFormatada" label="Data de entrega" v-on="on" prepend-icon="date_range"  :rules="[rules.required]"></v-text-field>
+              <v-text-field
+                :value="dataFormatada"
+                label="Data de entrega"
+                v-on="on"
+                prepend-icon="date_range"
+                :rules="[rules.required]"
+              ></v-text-field>
             </template>
-            <v-date-picker v-model="dataEntrega" @input="seletorData = false" locale="pt-BR" :date-format="date => new Date(date)">
+            <v-date-picker
+              v-model="dataEntrega"
+              @input="seletorData = false"
+              locale="pt-BR"
+              :date-format="date => new Date(date)"
+            >
               <v-btn text color="primary" @click="seletorData = false">Cencalar</v-btn>
               <v-btn text color="primary" @click="$refs.datepicker.save(date)">OK</v-btn>
             </v-date-picker>
@@ -60,7 +76,7 @@
 
 
 <script>
-import dataMixin from '../../util/date'
+import dataMixin from "../../util/date";
 import backend from "../../backend";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -70,6 +86,7 @@ export default {
   data() {
     return {
       descricao: "",
+      titulo: "",
       seletorData: false,
       dataEntrega: "",
       materias: [],
@@ -85,32 +102,33 @@ export default {
     submeter() {
       if (!this.validar()) return;
       this.submetendo = true;
-      
-      this.materia.forEach(m => { // Para cada materia selecionada, adicione um exercicio
+
+      this.materia.forEach(m => {
+        // Para cada materia selecionada, adicione um exercicio
         let exercicio = {
+          titulo: this.titulo,
           descricao: this.descricao,
-          prazo: new Date(this.dataEntrega.replace(/-/g, '/')).getTime(),
+          prazo: new Date(this.dataEntrega.replace(/-/g, "/")).getTime(),
           nota: 10,
           materiaId: m
-        }
-        try{
-
-          axios.post(`${backend.uri}/exercicio/create`, exercicio).then(res=>{
+        };
+        try {
+          axios.post(`${backend.uri}/exercicio/create`, exercicio).then(res => {
             this.submetendo = false;
-            exercicio = res.data.data.exercicio
-            this.log(exercicio)
-            exercicio.nome = exercicio.descricao
-            exercicio.submissoes= 0
+            exercicio = res.data.data.exercicio;
+            this.log(exercicio);
+            exercicio.nome = exercicio.descricao;
+            exercicio.submissoes = 0;
 
-            this.adicionarCallback(exercicio)
-        })
-        }catch(e){
+            this.adicionarCallback(exercicio);
+          });
+        } catch (e) {
           /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
           console.error(e);
           /* eslint-enable no-console */
         }
       });
-      
+
       //this.resetar();
     },
     validar() {
@@ -130,9 +148,9 @@ export default {
     }
   },
   computed: {
-    dataFormatada(){
-      let data = new Date(this.dataEntrega.replace(/-/g, '/')).getTime()
-      return data ? this.converterData(data) : ""
+    dataFormatada() {
+      let data = new Date(this.dataEntrega.replace(/-/g, "/")).getTime();
+      return data ? this.converterData(data) : "";
     }
   },
   created() {
@@ -143,8 +161,8 @@ export default {
       });
     });
   },
-  props:{
-    adicionarCallback:{
+  props: {
+    adicionarCallback: {
       type: Function,
       required: false
     }
