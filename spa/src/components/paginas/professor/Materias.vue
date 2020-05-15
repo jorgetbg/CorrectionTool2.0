@@ -40,7 +40,7 @@
                 <v-layout column px-6>
                   <v-flex v-for="(exercicio, j) in materia.exercicios" :key="j">
                     <card-exercicio
-                      :exercicioNome="exercicio.descricao"
+                      :exercicioNome="exercicio.titulo"
                       :submissoes="`${exercicio.submissoesCount} / ${materia.capacidade}`"
                       :dataFinal="exercicio.prazo"
                       :status="exercicio.status"
