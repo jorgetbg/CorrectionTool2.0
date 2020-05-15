@@ -29,7 +29,7 @@
         v-for="(exercicio, i) in exercicios"
         :key="i"
         :loading="carregando"
-        :exercicioNome="exercicio.descricao"
+        :exercicioNome="exercicio.titulo"
         :materiaNome="exercicio.materia.nome"
         :submissoes="exercicio.submissoesCount"
         :dataFinal="exercicio.prazo"
