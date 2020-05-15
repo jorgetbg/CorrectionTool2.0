@@ -47,7 +47,7 @@ routes.get('/resolucao/:resolucaoId/download',(req, res, next) => SessionControl
 
 //Testes
 routes.post('/testes/create',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.store)
-routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next, "professor"),TesteController.getTestesExercicio)
+routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next),TesteController.getTestesExercicio)
 
 
 routes.post('/docker',DockerController.containerCallback)
