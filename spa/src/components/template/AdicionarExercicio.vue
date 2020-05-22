@@ -11,11 +11,7 @@
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
-          <v-text-field
-            label="Titulo"
-            v-model="titulo"
-            :rules="[rules.required, rules.min]"
-          ></v-text-field>
+          <v-text-field label="Titulo" v-model="titulo" :rules="[rules.required, rules.min]"></v-text-field>
           <v-textarea
             rows="3"
             auto-grow
@@ -103,6 +99,7 @@ export default {
       if (!this.validar()) return;
       this.submetendo = true;
 
+      let exerciciosRequisicoes = [];
       this.materia.forEach(m => {
         // Para cada materia selecionada, adicione um exercicio
         let exercicio = {
@@ -112,24 +109,38 @@ export default {
           nota: 10,
           materiaId: m
         };
+        let exercicioRequisicao
         try {
-          axios.post(`${backend.uri}/exercicio/create`, exercicio).then(res => {
-            this.submetendo = false;
-            exercicio = res.data.data.exercicio;
-            this.log(exercicio);
-            exercicio.nome = exercicio.descricao;
-            exercicio.submissoes = 0;
+          exercicioRequisicao = axios
+            .post(`${backend.uri}/exercicio/create`, exercicio)
+            .then(res => {
+              this.submetendo = false;
+              exercicio = res.data.data.exercicio;
+              this.log(exercicio);
+              exercicio.nome = exercicio.descricao;
+              exercicio.submissoes = 0;
 
-            this.adicionarCallback(exercicio);
-          });
+              this.adicionarCallback(exercicio);
+            });
         } catch (e) {
-          /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-          console.error(e);
-          /* eslint-enable no-console */
+          throw e;
         }
+        exerciciosRequisicoes.push(exercicioRequisicao);
       });
 
-      //this.resetar();
+      Promise.all(exerciciosRequisicoes)
+        .then(() => {
+          this.$store.commit("showMessage", {
+            content: "Exercicios adicionados com sucesso!",
+            error: false
+          });
+        })
+        .catch(() => {
+          this.$store.commit("showMessage", {
+            content: "Erro ao adicionar um ou mais exercícios.",
+            error: true
+          });
+        });
     },
     validar() {
       return this.$refs.form.validate();

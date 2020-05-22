@@ -82,30 +82,55 @@ export default {
       rules: {
         required: value => !!value || "Obrigatório.",
         min: v => {
-          this.senhaErro = null //Limpa mensagem de erro de senha incorreta vinda da submissão
-          return v.length >= 8 || "Min 8 caracteres"},
-        senhasIguais: (senha1, senha2) => senha1 === senha2 || "As senhas são diferentes.",
-        email: v => /.+@.+\..+/.test(v) || 'E-mail inválido',
+          this.senhaErro = null; //Limpa mensagem de erro de senha incorreta vinda da submissão
+          return v.length >= 8 || "Min 8 caracteres";
+        },
+        senhasIguais: (senha1, senha2) =>
+          senha1 === senha2 || "As senhas são diferentes.",
+        email: v => /.+@.+\..+/.test(v) || "E-mail inválido"
       }
     };
   },
   methods: {
     logar() {
-      if(!this.$refs.form.validate()) return;
+      if (!this.$refs.form.validate()) return;
       this.submetendo = true;
       let user = { email: this.email, password: this.senha1, nome: this.nome };
 
-      axios.post(`${backend.uri}/aluno/create`, user).then(res => {
-            let authUser = res.data.data.user;
-            window.localStorage.setItem("user", JSON.stringify(authUser));
-            this.$cookie.set("x-access-token", res.data.data.token, { expires: '1Y' });
-            this.$emit("login-status");
-            this.$router.push("aluno")
-        }).catch(e => {
-          this.senhaErro = e.response.data.message
-        }).finally(()=> {
-          this.submetendo = false;
+      axios
+        .post(`${backend.uri}/aluno/create`, user)
+        .then(res => {
+          let authUser = res.data.data.user;
+          window.localStorage.setItem("user", JSON.stringify(authUser));
+          this.$cookie.set("x-access-token", res.data.data.token, {
+            expires: "1Y"
+          });
+          this.$emit("login-status");
+          this.$router.push("aluno");
+          this.$store.commit("showMessage", {
+            content: "Bem vindo!",
+            error: false
+          });
         })
+        .catch(e => {
+          /* eslint-disable no-console */
+          console.dir(e);
+          /* eslint-enable no-console */
+          if (e.response.status == 401) {
+            this.$store.commit("showMessage", {
+              content: e.response.data.message,
+              error: true
+            });
+          }else{
+            this.$store.commit("showMessage", {
+              content: "Não foi possivel registrar este usuario. Tente novamente mais tarde ou entre em contato conosco.",
+              error: true
+            });
+          }
+        })
+        .finally(() => {
+          this.submetendo = false;
+        });
     }
   }
 };

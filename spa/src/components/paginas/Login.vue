@@ -65,29 +65,44 @@ export default {
       rules: {
         required: value => !!value || "Obrigatório.",
         min: v => {
-          this.senhaErro = null //Limpa mensagem de erro de senha incorreta vinda da submissão
-          return v.length >= 8 || "Min 8 caracteres"},
+          this.senhaErro = null; //Limpa mensagem de erro de senha incorreta vinda da submissão
+          return v.length >= 8 || "Min 8 caracteres";
+        }
       }
     };
   },
   methods: {
     logar() {
-      if(!this.$refs.form.validate()) return;
+      if (!this.$refs.form.validate()) return;
       this.submetendo = true;
       let user = { email: this.login, password: this.senha };
 
-      axios.post(`${backend.uri}/${this.role}/login`, user).then(res => {
-            let authUser = res.data.data.user;
-            window.localStorage.setItem("user", JSON.stringify(authUser));
-            this.$cookie.set("x-access-token", res.data.data.token, { expires: '1Y' });
-            this.$emit("login-status");
-            if (this.role == "professor") this.$router.push("exercicios");
-            else this.$router.push("aluno")
-        }).catch(e => {
-          this.senhaErro = e.response.data.message
-        }).finally(()=> {
-          this.submetendo = false;
+      axios
+        .post(`${backend.uri}/${this.role}/login`, user)
+        .then(res => {
+          let authUser = res.data.data.user;
+          window.localStorage.setItem("user", JSON.stringify(authUser));
+          this.$cookie.set("x-access-token", res.data.data.token, {
+            expires: "1Y"
+          });
+          this.$emit("login-status");
+          this.$store.commit("showMessage", {
+            content: "Login efetuado com sucesso!",
+            error: false
+          });
+          if (this.role == "professor") this.$router.push("exercicios");
+          else this.$router.push("aluno");
         })
+        .catch(e => {
+          this.senhaErro = e.response.data.message;
+          this.$store.commit("showMessage", {
+            content: "Não foi possivel efetuar o login!",
+            error: true
+          });
+        })
+        .finally(() => {
+          this.submetendo = false;
+        });
     }
   }
 };

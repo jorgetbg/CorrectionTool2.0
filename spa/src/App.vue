@@ -1,5 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
+    <BarraNotificacao/>
     <Navbar :user="user" v-if="autenticado != 'convidado'" v-on:login-status="checarAutenticacao"/>
     <v-content class="px4 pb-4 grey lighten-4" >
       <router-view  v-on:login-status="checarAutenticacao"></router-view>
@@ -11,11 +12,13 @@
 <script>
 
 import Navbar from './components/template/Navbar'
+import BarraNotificacao from './components/template/BarraNotificacao'
 
 export default {
   name: 'App',
   components: {
-    Navbar
+    Navbar,
+    BarraNotificacao
   },
 
   data: () => ({
@@ -24,7 +27,6 @@ export default {
       nome: "João Augusto",
       gravatarUrl: ''
     }
-    //
   }),
   methods:{
 checarAutenticacao(){
@@ -41,9 +43,6 @@ checarAutenticacao(){
   },
   created(){
     this.checarAutenticacao()
-    /* eslint-disable no-console */
-    console.log(this.$router.currentRoute)
-    /* eslint-enable no-console */
     if(this.$router.currentRoute.name == null || !this.$router.resolve(this.$router.currentRoute.name))
       this.$router.push("login")
   },
