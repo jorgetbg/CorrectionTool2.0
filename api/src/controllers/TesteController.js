@@ -5,8 +5,8 @@ const Matricula = require('../models/Matricula')
 module.exports = {
   async store(req, res) {
     const { input, output, exercicioId, userId, isPrivate } = req.body;
-    if (!input || !output || !userId || !isPrivate)
-      return res.status(401).send({ status: "error", message: "Informações inválidas.", data: null })
+    if (!input || !output || !userId || !exercicioId)
+      return res.status(401).send({ status: "error", message: "Informações inválidas!", data: null })
 
     let exercicio
     try{
