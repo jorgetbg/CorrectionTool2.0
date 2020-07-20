@@ -23,18 +23,29 @@ services:
     ports:
       - "${API_PORT:-8092}:3333"
     volumes:
-      - ./api:/var/www
+      - type: bind
+        source: ./api
+        target: /var/www
+      - type: bind
+        source: ./api/uploads
+        target: /usr/local/Exercicios
     links:
       - mongo
     working_dir: /var/www
     command: "npm run dev"
 
   mongo:
-    image: mongo
+    #image: mongo
+    build: ./env/dev/mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: correctiontool
+    volumes:
+      - mongodata:/data/db #Helps to store MongoDB data in `./mongo/data`
+      #- ./env/dev/mongo/seed.js:/docker-entrypoint-initdb.d/init-mongo-js:ro
+      #- ./env/dev/mongo/seed.js:/docker-entrypoint-initdb.d/seed.js:ro
     ports:
       - 27017:27017
 
@@ -49,5 +60,5 @@ services:
 
 
 volumes:
-  database-volume:
+  mongodata:
   composer-volume:

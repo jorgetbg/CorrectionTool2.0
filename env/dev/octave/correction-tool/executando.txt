@@ -1,0 +1,1 @@
+{"id":1,"operacao":"executar","parametros":["/opt/corretor/exemplo.m","/opt/corretor/entradas.csv","/opt/corretor/saidas.csv"]}

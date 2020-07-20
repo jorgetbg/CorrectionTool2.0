@@ -124,10 +124,13 @@ def init():
     for path in sys.argv:
         ret = json_from_file(path)
         #print(ret)
+        myobj = '{"content-type":"json"}'
         if "__Error__" in ret :
-            jsn = '{"status":"error","message":\"'+ret+'\","data":null}'
-            a=requests.post(url="http://54.233.208.242/api/docker",data=jsn)
+            request_data = {"status": "error","message": ret}
+            a=requests.post(url="http://host.docker.internal:8092/docker",data=request_data)
         else:
-            jsn = '{"status":"success","message":\"'+ret+'\","data":"'+path+'"}'
-            a=requests.post(url="http://54.233.208.242/api/docker",data=jsn)
-        print(jsn)
+            request_data = {"status": "success","message": ret, "data": path}
+            a=requests.post("http://host.docker.internal:8092/docker", json=request_data)
+            #a=requests.post(url="http://host.docker.internal:8092/docker",data=jsn)
+        print(request_data)
+        print(a)

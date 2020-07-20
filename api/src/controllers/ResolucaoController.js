@@ -1,6 +1,8 @@
 const Resolucao = require("../models/Resolucao");
 const Exercicio = require("../models/Exercicio");
+const Teste = require("../models/Teste");
 const FileUploadController = require("./FileUploadController");
+const FileController = require("./FileController")
 const DockerController = require("../controllers/DockerController")
 const fs = require("fs");
 const path = require("path");
@@ -8,7 +10,7 @@ const path = require("path");
 module.exports = {
   async store(req, res) {
     const { userId, exercicioId } = req.body;
-
+    //Validação
     let resolucao, exercicio, prazoDiff, prazoString;
     try {
       if (!req.file) throw "É necessario fazer o upload de um arquivo.";
@@ -18,7 +20,8 @@ module.exports = {
 
       prazoDiff = Date.now() - exercicio.prazo;
       if (prazoDiff > 0) throw "Submissão atrasada.";
-
+    //-----
+    //Salvar arquivo
       resolucao = await Resolucao.findOne({
         aluno: userId,
         exercicio: exercicioId
@@ -37,19 +40,19 @@ module.exports = {
         resolucao.resolucaoFilename = originalname;
 
         await resolucao.save();
-        console.log(resolucao)
       } else {
         resolucao = await Resolucao.create({
           exercicio: exercicioId,
           aluno: userId,
           resolucaoFilename: originalname,
-          dataSubmissao:  Date.now()
+          dataSubmissao: Date.now()
         });
         exercicio.submissoesCount++;
         await exercicio.save()
       }
       FileUploadController.rename(tempPath, definitivoPath, originalname);
-      corrigirResolucao(resolucao)
+      //--
+      let correcao = await prepararCorrecao(resolucao)
     } catch (e) {
       if (req.file)
         fs.unlink(req.file.path, e => {
@@ -118,9 +121,8 @@ module.exports = {
     let resolucao, file, filePath;
     try {
       resolucao = await Resolucao.findById(resolucaoId)
-        .populate({path:'exercicio', populate: {path: "materia", select: "professor" }})
+        .populate({ path: 'exercicio', populate: { path: "materia", select: "professor" } })
       if (!resolucao) throw "Resolução Inexistente.";
-      console.log(resolucao)
       if (role == "aluno") {
         if (userId != resolucao.aluno)
           throw "Resolução não pertence a esse aluno.";
@@ -133,10 +135,8 @@ module.exports = {
         resolucao.exercicio.materia._id,
         resolucao.exercicio._id,
         resolucao.aluno
-        );
-      console.log(filePath)
+      );
       filePath = path.resolve(filePath, resolucao.resolucaoFilename)
-      console.log(filePath)
     } catch (e) {
       return res.status(400).send({ status: "error", message: e, data: null });
     }
@@ -144,6 +144,63 @@ module.exports = {
   }
 };
 
-async function corrigirResolucao(resolucao){
-  DockerController.corrigirResolucao(resolucao)
+async function fetchTestes(exercicioId) {
+  try {
+    let testes = await Teste.find({ exercicio: exercicioId }).populate("exercicio", "materia")
+    return testes
+  } catch (error) {
+    throw error
+  }
+}
+
+async function prepararCorrecao(resolucao) {
+  let json = {}
+  try {
+    let testes = await fetchTestes(resolucao.exercicio)
+
+    json.executar = await JSONFactory(testes, resolucao, "executar")
+    json.comparar = await JSONFactory(testes, resolucao, "comparar")
+    console.log(json)
+    DockerController.executarOperacao(json)
+
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+  return json
+}
+
+
+async function JSONFactory(testes, resolucao, operacao) {
+  let materia = testes[0].exercicio.materia;
+  let exercicio = testes[0].exercicio._id;
+  let aluno = resolucao.aluno;
+
+  let _parametroEntrada = {
+    id: { aluno, materia, exercicio },
+    operacao
+  }
+
+
+  if (operacao === 'comparar') {
+    _parametroEntrada.parametros = [
+      FileController.resolvePathInputs(materia, exercicio, testes),
+      FileController.resolvePathOutput(materia, exercicio, aluno)
+    ]
+
+  } else if (operacao === 'executar') {
+    _parametroEntrada.parametros = [
+      FileController.resolvePathExercicio(materia, exercicio, aluno, resolucao.resolucaoFilename),
+      FileController.resolvePathInputs(materia, exercicio, testes),
+      FileController.resolvePathOutput(materia, exercicio, aluno)
+    ]
+  } else {
+    throw "Operação indisponivel"
+  }
+
+  return _parametroEntrada
+  
+  //Esta parte estava criando o arquivo JSON. não necessario de acordo com mudanças de projeto
+  //let pathJson = await FileController.resolvePathJson(materia, exercicio, aluno, _parametroEntrada)
+  //return [pathJson, _parametroEntrada]
 }

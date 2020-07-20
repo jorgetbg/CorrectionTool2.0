@@ -1,4 +1,3 @@
-const mfs = require("memfs");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,42 +7,33 @@ module.exports = {
     try {
       filePath = "/usr/local/Exercicios/" + materiaId + "/" + exercicioId + "/" + userId + "/" + filename
     } catch (e) {
-      console.log(e);
+      console.log("resolvePathExercicio", e);
+      throw e;
     }
     return filePath;
   },
-  resolvePathInputs(testes) {
-    let filePath;
+  resolvePathInputs(materiaId, exercicioId, testes) {
     try {
-      filePath = "/usr/local/Exercicios/" + testes[0].exercicio.materia + "/" + testes[0].exercicio._id
-
-      let inputsString = "";
-      testes.forEach(teste => {
-        teste.input.forEach((inp, index) => {
-          inputsString += `${inp}`;
-          if (index == teste.input.length - 1) return;
-          inputsString += "|";
-        });
-        inputsString += "\n";
-      });
-      mfs.fs.mkdirSync(filePath, { recursive: true });
-
-      mfs.fs.writeFileSync(filePath + "/inputs.csv", inputsString);
-      return filePath + "/inputs.csv";
+      let folderPath = "/usr/local/Exercicios/" + materiaId + "/" + exercicioId
+      generateInputs(testes, folderPath)
+      return folderPath + "/inputs.csv";
     } catch (e) {
-      console.log(e);
+      console.log("resolvePathInputs", e)
+      throw e;
     }
   },
-  resolvePathOutput(testes, userId) {
-    let filePath;
+  resolvePathOutput(materiaId, exercicioId, userId) {
     try {
-      filePath = "/usr/local/Exercicios/" + testes[0].exercicio.materia + "/" + testes[0].exercicio._id + "/" + userId + "/output.txt"
+      let filePath;
+      filePath = "/usr/local/Exercicios/" + materiaId + "/" + exercicioId + "/" + userId + "/output.txt"
+      console.log("output:",filePath)
       return filePath;
     } catch (e) {
-      console.log(e);
+      console.log("resolvePathOutput", e)
+      throw e
     }
   },
-  resolvePathJson(testes, userId, input) {
+  async resolvePathJson(materiaId, exercicioId, aluno, input) {
     let filePath;
     let filePathBinded;
     try {
@@ -52,17 +42,48 @@ module.exports = {
         "..",
         "..",
         "uploads",
-        "" + testes[0].exercicio.materia,
-        "" + testes[0].exercicio._id,
-        "" + userId,
+        "" + materiaId,
+        "" + exercicioId,
+        "" + aluno,
         "" + "exec.json"
       );
-      fs.writeFileSync(filePath, JSON.stringify(input)); // Escreve JSON no diretorio local
-      filePathBinded = "/usr/local/Exercicios/" + testes[0].exercicio.materia + "/" + testes[0].exercicio._id + "/" + userId + "/exec.json"
+      await writeInputJson(filePath, input) //salva o arquivo na maquina HOST
+      filePathBinded = "/usr/local/Exercicios/" + materiaId + "/" + exercicioId + "/" + aluno + "/exec.json" //Retorna diretorio do container
 
       return filePathBinded;
     } catch (e) {
-      console.log(e);
+      console.log("resolvePathJson",e);
+      throw e
     }
   }
 };
+async function writeInputJson(filePath, data){
+  try {
+    let folderPath = path.resolve(filePath, "..")
+    fs.mkdirSync(folderPath, { recursive: true });
+    fs.writeFileSync(filePath, JSON.stringify(data))
+  } catch (e) {
+    console.log("writeInputJson", e)
+    throw e
+  }
+}
+
+function generateInputs(testes, filePath) {
+  try {
+    let inputsString = "";
+    testes.forEach(teste => {
+      teste.input.forEach((inp, index) => {
+        inputsString += `${inp}`;
+        if (index == teste.input.length - 1) return;
+        inputsString += "|";
+      });
+      inputsString += "\n";
+    });
+    fs.mkdirSync(filePath, { recursive: true })
+    fs.writeFileSync(filePath + "/inputs.csv", inputsString);
+    console.log("input:", filePath + "/inputs.csv")
+  } catch (e) {
+    console.log("Não foi possivel criar o diretório.", e)
+    throw e
+  }
+}

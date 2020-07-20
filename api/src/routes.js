@@ -50,11 +50,9 @@ routes.post('/testes/create',(req, res, next) => SessionController.validar(req, 
 routes.get('/exercicio/:exercicioId/testes',(req, res, next) => SessionController.validar(req, res, next),TesteController.getTestesExercicio)
 
 
-routes.post('/docker',DockerController.containerCallback)
 
 
-
-// routes.post('/sessions', SessionController.store);
+routes.post('/docker', DockerController.containerCallback);
 
 
 module.exports = routes;
